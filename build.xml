@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+** This is a template build file for a JOSM  plugin.
+**
+** Maintaining versions
+** ====================
+** See README.template
+**
+** Usage
+** =====
+** Call "ant help" to get possible build targets.
+**
+-->
+<project name="lane-connectivity" default="dist" basedir=".">
+    <property name="ant.build.javac.source" value="1.8"/>
+    <property name="ant.build.javac.target" value="1.8"/>
+    <!-- enter the SVN commit message -->
+    <property name="commit.message" value="Lane Connectivity"/>
+    <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
+    <property name="plugin.main.version" value="10580"/>
+
+    <!-- Configure these properties (replace "..." accordingly).
+         See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
+    -->
+    <property name="plugin.author" value="Taylor Smock, Andrew Piechota, Farris Billy"/>
+    <property name="plugin.class" value="com.kaart.laneconnectivity.LaneConnectivity"/>
+    <property name="plugin.description" value="Implements lane connecitivity in a GUI"/>
+    <!--<property name="plugin.icon" value="..."/>-->
+    <!--<property name="plugin.link" value="..."/>-->
+    <!--<property name="plugin.early" value="..."/>-->
+    <!--<property name="plugin.requires" value="..."/>-->
+    <!--<property name="plugin.stage" value="..."/>-->
+
+    <!-- ** include targets that all plugins have in common ** -->
+    <import file="../build-common.xml"/>
+
+</project>
