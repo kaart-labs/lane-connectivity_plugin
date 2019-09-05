@@ -22,7 +22,7 @@
     <!-- Configure these properties (replace "..." accordingly).
          See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
     -->
-    <property name="plugin.author" value="Taylor Smock, Andrew Piechota, Farris Billy"/>
+    <property name="plugin.author" value="Taylor Smock, Ryan Fleming, RD Clare"/>
     <property name="plugin.class" value="com.kaart.laneconnectivity.LaneConnectivity"/>
     <property name="plugin.description" value="Implements lane connecitivity in a GUI"/>
     <!--<property name="plugin.icon" value="..."/>-->
