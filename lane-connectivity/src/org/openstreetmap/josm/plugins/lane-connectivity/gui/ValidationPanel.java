@@ -1,4 +1,4 @@
-// License: GPL. For details, see LICENSE file.
+/* License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnlanes.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -138,4 +138,4 @@ class ValidationPanel extends JPanel {
             selectButton.setEnabled(true);
         }
     }
-}
+}*/
