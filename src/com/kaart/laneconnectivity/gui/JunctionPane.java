@@ -32,6 +32,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
+import org.openstreetmap.josm.tools.Logging;
+
 import com.kaart.laneconnectivity.model.UnexpectedDataException;
 
 class JunctionPane extends JComponent {
@@ -319,8 +321,10 @@ class JunctionPane extends JComponent {
                     center();
                 }
             } catch (UnexpectedDataException e) {
+            Logging.error(e);
                 displayError(e);
             } catch (RuntimeException e) {
+            Logging.error(e);
                 displayError(e);
             }
         } else if (state instanceof State.Dirty) {

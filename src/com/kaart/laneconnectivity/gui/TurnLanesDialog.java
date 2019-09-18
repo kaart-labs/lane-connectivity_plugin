@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.*;
-import java.awt.event.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -47,7 +45,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         private static final long serialVersionUID = 4114119073563457706L;
 
         EditAction() {
-            super(tr("boio"), "dialogs/edit", tr("Edit turn relations and lane lengths for selected node."), null,
+            super(tr("Edit"), "dialogs/edit", tr("Edit turn relations and lane lengths for selected node."), null,
                     false);
         }
 
@@ -61,26 +59,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         }
     }
 
-    private class TestAction extends JosmAction {
-
-        TestAction() {
-            super(tr("Test"), "Test/test", tr("test test test test test test."), null,
-                    false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final CardLayout cl = (CardLayout) body.getLayout();
-            cl.show(body, CARD_Test);
-            editing = true;
-            testButton.setSelected(true);
-            refresh();
-        }
-    }
-
-
-
-    /*private class ValidateAction extends JosmAction {
+    private class ValidateAction extends JosmAction {
         private static final long serialVersionUID = 7510740945725851427L;
 
         ValidateAction() {
@@ -95,7 +74,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
             editing = false;
             validateButton.setSelected(true);
         }
-    }*/
+    }
 
     private final DataSetListener dataSetListener = new DataSetListener() {
         @Override
@@ -147,14 +126,12 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
     };
 
     private final JosmAction editAction = new EditAction();
-    private final JosmAction testAction = new TestAction();
-    //private final JosmAction validateAction = new ValidateAction();
+    private final JosmAction validateAction = new ValidateAction();
 
     private static final long serialVersionUID = -1998375221636611358L;
 
     private static final String CARD_EDIT = "EDIT";
-    private static final String CARD_Test = "Test";
-    //private static final String CARD_VALIDATE = "VALIDATE";
+    private static final String CARD_VALIDATE = "VALIDATE";
 
     private final JPanel body = new JPanel();
 
@@ -162,8 +139,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
     private final JunctionPane junctionPane = new JunctionPane(GuiContainer.empty());
 
     private final JToggleButton editButton = new JToggleButton(editAction);
-    private final JToggleButton testButton = new JToggleButton(testAction);
-    //private final JToggleButton validateButton = new JToggleButton(validateAction);
+    private final JToggleButton validateButton = new JToggleButton(validateAction);
 
     private final Set<OsmPrimitive> selected = new HashSet<>();
 
@@ -174,7 +150,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
     private boolean leftDirection = ModelContainer.empty().isLeftDirection();
 
     public TurnLanesDialog() {
-        super(tr("Turn Lanes"), "turnlanes.png", tr("Edit turn lanes"), null, 200);
+        super(tr("Connectivity Lanes"), "turnlanes.png", tr("Edit turn lanes"), null, 200);
 
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         SelectionEventManager.getInstance().addSelectionListener(this);
@@ -182,12 +158,10 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         final JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 4, 4));
         final ButtonGroup group = new ButtonGroup();
         group.add(editButton);
-        group.add(testButton);
-        //group.add(validateButton);
+        group.add(validateButton);
         addTrafficDirectionCheckBox(buttonPanel);
         buttonPanel.add(editButton);
-        buttonPanel.add(testButton);
-        //buttonPanel.add(validateButton);
+        buttonPanel.add(validateButton);
 
         body.setLayout(new CardLayout(4, 4));
 
@@ -195,8 +169,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         add(body, BorderLayout.CENTER);
 
         body.add(junctionPane, CARD_EDIT);
-        body.add(junctionPane, CARD_Test);
-        //body.add(new ValidationPanel(), CARD_VALIDATE);
+        body.add(new ValidationPanel(), CARD_VALIDATE);
 
         editButton.doClick();
     }
@@ -281,6 +254,6 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         editAction.destroy();
-        //validateAction.destroy();
+        validateAction.destroy();
     }
 }

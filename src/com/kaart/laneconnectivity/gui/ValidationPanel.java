@@ -1,5 +1,5 @@
-/* License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.plugins.turnlanes.gui;
+// License: GPL. For details, see LICENSE file.
+package com.kaart.laneconnectivity.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -21,8 +21,8 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.plugins.turnlanes.model.Issue;
-import org.openstreetmap.josm.plugins.turnlanes.model.Validator;
+import com.kaart.laneconnectivity.model.Issue;
+import com.kaart.laneconnectivity.model.Validator;
 
 class ValidationPanel extends JPanel {
     private static final long serialVersionUID = -1585778734201458665L;
@@ -138,4 +138,4 @@ class ValidationPanel extends JPanel {
             selectButton.setEnabled(true);
         }
     }
-}*/
+}

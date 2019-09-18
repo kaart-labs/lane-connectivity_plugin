@@ -1,19 +1,10 @@
+// License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-
-import javax.swing.AbstractAction;
-
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
+import com.kaart.laneconnectivity.gui.TurnLanesDialog;
 
 /**
  *
@@ -27,20 +18,18 @@ public class LaneConnectivity extends Plugin {
 
 	public LaneConnectivity(PluginInformation info) {
 		super(info);
-		AbstractAction laneConnectivityAction = new AbstractAction(NAME.concat(tr(" window")),
-				ImageProvider.get("dialogs", PLUGIN_IMAGE, ImageProvider.ImageSizes.MENU)) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO make a window
-			}
-		};
-		MainApplication.getMenu().dataMenu.add(laneConnectivityAction);
 	}
 
 	public static String getVersion() {
 		// TODO get the version dynamically
 		return "v0.0.1";
 	}
+
+    @Override
+    public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+        if (oldFrame == null && newFrame != null) {
+            // there was none before
+            newFrame.addToggleDialog(new TurnLanesDialog());
+        }
+    }
 }

@@ -161,7 +161,7 @@ class RoadGui {
         }
     }
 
-    /*private final class LaneAdder extends InteractiveElement {
+    private final class LaneAdder extends InteractiveElement {
         private final Road.End end;
         private final Lane.Kind kind;
 
@@ -237,7 +237,7 @@ class RoadGui {
             end.addLane(kind);
             return new State.Invalid(old);
         }
-    }*/
+    }
 
     final class IncomingConnector extends InteractiveElement {
         private final Road.End end;
@@ -603,7 +603,7 @@ class RoadGui {
             result.add(new ViaConnector(getModel().getFromEnd()));
             result.add(new ViaConnector(getModel().getToEnd()));
         } else {
-            //result.addAll(laneAdders());
+            result.addAll(laneAdders());
             result.addAll(extenders(getModel().getFromEnd()));
             result.addAll(extenders(getModel().getToEnd()));
         }
@@ -616,7 +616,7 @@ class RoadGui {
         return result;
     }
 
-    /*private List<LaneAdder> laneAdders() {
+    private List<LaneAdder> laneAdders() {
         final List<LaneAdder> result = new ArrayList<>(4);
 
         if (!incomingA.getLanes().isEmpty()) {
@@ -630,7 +630,7 @@ class RoadGui {
         }
 
         return result;
-    }*/
+    }
 
     private List<Extender> extenders(Road.End end) {
         final List<Extender> result = new ArrayList<>();

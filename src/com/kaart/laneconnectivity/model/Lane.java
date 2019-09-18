@@ -15,9 +15,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
-import com.kaart.laneconnectivity.model.Road;
-import com.kaart.laneconnectivity.model.Turn;
-
 public class Lane {
     public enum Kind {
         EXTRA_LEFT,
@@ -118,15 +115,17 @@ public class Lane {
     }
 
     public Lane(Road.End roadEnd, int index, Kind kind, double length) {
-        assert kind == Kind.EXTRA_LEFT || kind == Kind.EXTRA_RIGHT;
+        if (kind == Kind.EXTRA_LEFT || kind == Kind.EXTRA_RIGHT) {
+            this.roadEnd = roadEnd;
+            this.index = index;
+            this.kind = kind;
+            this.length = length;
 
-        this.roadEnd = roadEnd;
-        this.index = index;
-        this.kind = kind;
-        this.length = length;
-
-        if (length <= 0) {
-            throw new IllegalArgumentException("Length must be positive");
+            if (length <= 0) {
+                throw new IllegalArgumentException("Length must be positive");
+            }
+        } else {
+            throw new IllegalArgumentException("kind must be Kind.EXTRA_LEFT or Kind.EXTRA_RIGHT");
         }
     }
 
@@ -184,7 +183,7 @@ public class Lane {
     }
 
     public void addTurn(List<Road> via, Road.End to) {
-        final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add turn"));
+        final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add {0}", Constants.TYPE_CONNECTION));
 
         Relation existing = null;
         for (Turn t : to.getTurns()) {
