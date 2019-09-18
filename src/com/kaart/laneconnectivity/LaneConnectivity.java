@@ -23,12 +23,12 @@ import org.openstreetmap.josm.tools.Logging;
 public class LaneConnectivity extends Plugin {
 	public static final String NAME = "Lane Connectivity";
 
-	public static final String PLUGIN_IMAGE = null; // TODO get an image
+	public static final String PLUGIN_IMAGE = "turnlanes"; // TODO get an image
 
 	public LaneConnectivity(PluginInformation info) {
 		super(info);
 		AbstractAction laneConnectivityAction = new AbstractAction(NAME.concat(tr(" window")),
-				ImageProvider.get(PLUGIN_IMAGE, ImageProvider.ImageSizes.MENU)) {
+				ImageProvider.get("dialogs", PLUGIN_IMAGE, ImageProvider.ImageSizes.MENU)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
