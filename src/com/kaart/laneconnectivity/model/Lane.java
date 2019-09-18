@@ -216,6 +216,11 @@ public class Lane {
         return getRoad().getContainer();
     }
 
+    /**
+     * Add a turn relation
+     * @param via The list of via Roads
+     * @param to The Road that is getting the "to" role
+     */
     public void addTurn(List<Road> via, Road.End to) {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add turn"));
 
@@ -272,14 +277,12 @@ public class Lane {
             if (t.getFrom().getOutgoingRoadEnd().equals(getOutgoingRoadEnd()) && t.getVia().equals(via)) {
                 if (t.getFrom().equals(this)) {
                     // was already added
-
                     return;
                 }
 
                 existing = t.getRelation();
             }
         }
-
 
         //generic connectivity
         laneCount1 = Integer.parseInt(getOutgoingRoadEnd().getWay().get("lanes"));

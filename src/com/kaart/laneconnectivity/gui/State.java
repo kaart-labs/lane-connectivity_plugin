@@ -33,11 +33,11 @@ abstract class State {
         private final Lane lane;
         private final List<RoadGui.ViaConnector> vias;
 
-        Connecting(Lane lane) {
+        public Connecting(Lane lane) {
             this(lane, Collections.<RoadGui.ViaConnector>emptyList());
         }
 
-        Connecting(Lane lane, List<ViaConnector> vias) {
+        public Connecting(Lane lane, List<ViaConnector> vias) {
             this.lane = lane;
             this.vias = vias;
         }
