@@ -14,7 +14,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.Tagged;
 
 public class Lane {
     public enum Kind {
@@ -257,7 +256,8 @@ public class Lane {
         }
 
         final String key = isExtra() ? Constants.TURN_KEY_EXTRA_LANES : Constants.TURN_KEY_LANES;
-        final List<Integer> lanes = Turn.indices(r, key);
+        // TODO don't use keySet, use all of the information.
+        final List<Integer> lanes = new ArrayList<>(Turn.indices(r, key).keySet());
         lanes.add(getIndex());
         cmd.backup(r).put(key, Turn.join(lanes));
 

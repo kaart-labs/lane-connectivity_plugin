@@ -5,10 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -17,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+
 import com.kaart.laneconnectivity.CollectionUtils;
 
 public final class Turn {
@@ -117,27 +120,44 @@ public final class Turn {
         n = TurnlanesUtils.getOppositeEnd(to, n);
 
         final Set<Turn> result = new HashSet<>();
-        for (int i : indices(r, Constants.TURN_KEY_LANES)) {
+        // TODO don't use keySet, use all of the information.
+        for (int i : indices(r, Constants.TURN_KEY_LANES).keySet()) {
             result.add(new Turn(r, fromRoadEnd.getLane(Lane.Kind.REGULAR, i), via, toRoadEnd));
-        }
-        for (int i : indices(r, Constants.TURN_KEY_EXTRA_LANES)) {
-            result.add(new Turn(r, fromRoadEnd.getExtraLane(i), via, toRoadEnd));
         }
         return result;
     }
 
-    static List<Integer> indices(Relation r, String key) {
+    /**
+     * Splits a key based off of a split pattern
+     * @param r The relation with the key-value to split
+     * @param key The key that needs to be split
+     * @return A map of a map of Integers (<Lane From, <Lane To, Optional>>). Lanes counts start at 1.
+     */
+    static Map<Integer, Map<Integer, Boolean>> indices(Relation r, String key) {
         final String joined = r.get(key);
 
         if (joined == null) {
-            return new ArrayList<>(1);
+            return Collections.emptyMap();
         }
 
-        final List<Integer> result = new ArrayList<>();
-        for (String lane : Constants.SPLIT_PATTERN.split(joined)) {
-            result.add(Integer.parseInt(lane));
+        final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
+        String[] lanes = joined.split(Constants.LANE_SEPARATOR);
+        for (int i = 0; i < lanes.length; i++) {
+            String[] lane = lanes[i].split(Constants.CONNECTIVITY_TO_FROM_SEPARATOR);
+            int laneNumber = Integer.parseInt(lane[0]);
+            Map<Integer, Boolean> connections = new HashMap<>();
+            String[] toLanes = Constants.SPLIT_PATTERN.split(lane[1]);
+            for (int j = 0; j < toLanes.length; j++) {
+                String toLane = toLanes[j];
+                if (Constants.CONNECTIVITY_OPTIONAL_LANES_PATTERN.matcher(toLane).matches()) {
+                    toLane = toLane.replace("(", "").replace(")", "");
+                    connections.put(Integer.parseInt(toLane), true);
+                } else {
+                    connections.put(Integer.parseInt(toLane), false);
+                }
+            }
+            result.put(laneNumber, connections);
         }
-
         return result;
     }
 
@@ -156,7 +176,8 @@ public final class Turn {
         final Road.End toRoadEnd = j.getRoadEnd(to);
 
         final Set<Turn> result = new HashSet<>();
-        for (int i : indices(r, Constants.TYPE_CONNECTIVITY)) {
+        // TODO don't use keySet, use all of the information.
+        for (int i : indices(r, Constants.TYPE_CONNECTIVITY).keySet()) {
             result.add(new Turn(r, fromRoadEnd.getLane(Lane.Kind.REGULAR, i), Collections.<Road>emptyList(), toRoadEnd));
         }
         return result;
@@ -183,6 +204,7 @@ public final class Turn {
     private final List<Road> via;
     private final Road.End to;
 
+    // TODO replace Road.End to with a Lane to
     public Turn(Relation relation, Lane from, List<Road> via, Road.End to) {
         this.relation = relation;
         this.from = from;
@@ -215,8 +237,9 @@ public final class Turn {
     }
 
     void remove(GenericCommand cmd) {
-        final List<Integer> lanes = indices(relation, Constants.TURN_KEY_LANES);
-        final List<Integer> extraLanes = indices(relation, Constants.TURN_KEY_EXTRA_LANES);
+        // TODO don't use keySet, use all of the information.
+        final List<Integer> lanes = new ArrayList<>(indices(relation, Constants.TURN_KEY_LANES).keySet());
+        final List<Integer> extraLanes = new ArrayList<>(indices(relation, Constants.TURN_KEY_EXTRA_LANES).keySet());
 
         // TODO understand & document
         if (lanes.size() + extraLanes.size() == 1 && (from.isExtra() ^ !lanes.isEmpty())) {
@@ -234,7 +257,8 @@ public final class Turn {
 
     void fixReferences(GenericCommand cmd, boolean left, int index) {
         final List<Integer> fixed = new ArrayList<>();
-        for (int i : indices(relation, Constants.TURN_KEY_EXTRA_LANES)) {
+        // TODO don't use keySet, use all of the information.
+        for (int i : indices(relation, Constants.TURN_KEY_EXTRA_LANES).keySet()) {
             if (left ? i < index : i > index) {
                 fixed.add(left ? i + 1 : i - 1);
             } else {
