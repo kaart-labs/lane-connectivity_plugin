@@ -38,6 +38,21 @@ public class TurnTest {
         Assert.assertFalse(lane1.get(1));
         Assert.assertFalse(lane2.get(2));
         Assert.assertTrue(lane2.get(3));
+
+        /* While we should discourage whitespace, enough people do it that we need to handle it */
+        relation.put("connectivity", "3:1, (2) | 4 : 2,(3)");
+        indices = Turn.indices(relation, "connectivity");
+        Assert.assertEquals(2, indices.size());
+
+        lane1 = indices.get(3);
+        lane2 = indices.get(4);
+        Assert.assertEquals(2, lane1.size());
+        Assert.assertEquals(2, lane2.size());
+
+        Assert.assertFalse(lane1.get(1));
+        Assert.assertTrue(lane1.get(2));
+        Assert.assertFalse(lane2.get(2));
+        Assert.assertTrue(lane2.get(3));
     }
 
 }

@@ -144,13 +144,13 @@ public final class Turn {
         String[] lanes = joined.split(Constants.LANE_SEPARATOR);
         for (int i = 0; i < lanes.length; i++) {
             String[] lane = lanes[i].split(Constants.CONNECTIVITY_TO_FROM_SEPARATOR);
-            int laneNumber = Integer.parseInt(lane[0]);
+            int laneNumber = Integer.parseInt(lane[0].trim());
             Map<Integer, Boolean> connections = new HashMap<>();
             String[] toLanes = Constants.SPLIT_PATTERN.split(lane[1]);
             for (int j = 0; j < toLanes.length; j++) {
-                String toLane = toLanes[j];
+                String toLane = toLanes[j].trim();
                 if (Constants.CONNECTIVITY_OPTIONAL_LANES_PATTERN.matcher(toLane).matches()) {
-                    toLane = toLane.replace("(", "").replace(")", "");
+                    toLane = toLane.replace("(", "").replace(")", "").trim();
                     connections.put(Integer.parseInt(toLane), true);
                 } else {
                     connections.put(Integer.parseInt(toLane), false);
