@@ -82,47 +82,47 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
     private final DataSetListener dataSetListener = new DataSetListener() {
         @Override
         public void wayNodesChanged(WayNodesChangedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
         @Override
         public void tagsChanged(TagsChangedEvent event) {
-            refresh(event.getDataset());
+            refresh();
 
         }
 
         @Override
         public void relationMembersChanged(RelationMembersChangedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
         @Override
         public void primitivesRemoved(PrimitivesRemovedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
         @Override
         public void primitivesAdded(PrimitivesAddedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
         @Override
         public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
         @Override
         public void nodeMoved(NodeMovedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
         @Override
         public void dataChanged(DataChangedEvent event) {
-            refresh(event.getDataset());
+            refresh();
         }
 
-        private void refresh(DataSet source) {
-            if (editing && source.getAllSelected().size() < Constants.MAX_SELECTION) {
+        private void refresh() {
+            if (editing) {
                 junctionPane.refresh();
             }
         }
@@ -216,7 +216,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
     }
 
     void refresh() {
-        if (isShowing && editing) {
+        if (isShowing && editing && selected.size() < Constants.MAX_SELECTION) {
             final Collection<Node> nodes = org.openstreetmap.josm.tools.Utils.filteredCollection(selected, Node.class);
             final Collection<Way> ways = org.openstreetmap.josm.tools.Utils.filteredCollection(selected, Way.class);
 
