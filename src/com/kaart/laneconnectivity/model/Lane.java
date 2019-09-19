@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.Tagged;
 
 public class Lane {
     public enum Kind {
@@ -162,6 +163,39 @@ public class Lane {
         return index;
     }
 
+    public String genericConnectivity(int laneCount1,int laneCount2){
+      String connectivity =null;
+      String connectivity2;
+      if (laneCount1==laneCount2) {
+        for(int i=0;i <laneCount1;i++){
+          if(i==0)connectivity = "1:1";
+          else{
+            connectivity2 = "|" + (i + 1) + ":" + (i + 1);
+            connectivity += connectivity2;
+          }
+        }
+      }
+      else if(laneCount1>laneCount2){
+        for(int i=0;i<laneCount2;i++){
+          if(i==0)connectivity = "1:1";
+          else{
+            connectivity2 = "|" + (i + 1) + ":" + (i + 1);
+            connectivity = connectivity + connectivity2;
+          }
+        }
+      }
+      else if(laneCount1<laneCount2){
+        for(int i=0;i<laneCount1;i++){
+          if(i==0)connectivity = "1:1";
+          else{
+            connectivity2 = "|" + (i + 1) + ":" + (i + 1);
+            connectivity = connectivity + connectivity2;
+          }
+        }
+      }
+      return connectivity;
+    }
+
     public Junction getOutgoingJunction() {
         return getOutgoingRoadEnd().getJunction();
     }
@@ -183,7 +217,7 @@ public class Lane {
     }
 
     public void addTurn(List<Road> via, Road.End to) {
-        final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add {0}", Constants.TYPE_CONNECTION));
+        final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add turn"));
 
         Relation existing = null;
         for (Turn t : to.getTurns()) {
@@ -228,7 +262,12 @@ public class Lane {
     public void addConnection(List<Road> via, Road.End to) {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add connectivity"));
 
+        String connectivity = " ";
+        int laneCount1,laneCount2;
+
         Relation existing = null;
+        //this for loop dosent actully do anything.
+        //to clarify this loop is what checks if the realtion already exists, however this version only works for turnlane:turns with a lane tag on the relation
         for (Turn t : to.getTurns()) {
             if (t.getFrom().getOutgoingRoadEnd().equals(getOutgoingRoadEnd()) && t.getVia().equals(via)) {
                 if (t.getFrom().equals(this)) {
@@ -240,15 +279,18 @@ public class Lane {
                 existing = t.getRelation();
             }
         }
-        //TODO add at least generic connectivity realtion, logic is connectivity based on least lanes ie, from lanes = 4, to lanes = 3, connectivity = 1:1|2:2|3:3, fourth lane needs to be done by user.
 
 
+        //generic connectivity
+        laneCount1 = Integer.parseInt(getOutgoingRoadEnd().getWay().get("lanes"));
+        laneCount2 = Integer.parseInt(to.getWay().get("lanes"));
+        connectivity=genericConnectivity(laneCount1,laneCount2);
 
         final Relation r;
         if (existing == null) {
             r = new Relation();
             r.put("type", Constants.TYPE_CONNECTION);
-            r.put("connectivity",Constants.TYPE_CONNECTIVITY);
+            r.put("connectivity",connectivity);
 
             r.addMember(new RelationMember(Constants.TURN_ROLE_FROM, getOutgoingRoadEnd().getWay()));
             if (via.isEmpty()) {
