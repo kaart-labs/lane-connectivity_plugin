@@ -44,4 +44,7 @@ public final class Constants {
     static final String LENGTHS_ROLE_END = "end";
     static final String LENGTHS_ROLE_WAYS = "ways";
 
+    /** The maximum selection of objects that the UI will look at */
+	public static final int MAX_SELECTION = 100;
+
 }

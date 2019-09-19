@@ -20,6 +20,7 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -38,6 +39,8 @@ import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+
+import com.kaart.laneconnectivity.model.Constants;
 import com.kaart.laneconnectivity.model.ModelContainer;
 
 public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeListener, DataSelectionListener {
@@ -79,47 +82,47 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
     private final DataSetListener dataSetListener = new DataSetListener() {
         @Override
         public void wayNodesChanged(WayNodesChangedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
         @Override
         public void tagsChanged(TagsChangedEvent event) {
-            refresh();
+            refresh(event.getDataset());
 
         }
 
         @Override
         public void relationMembersChanged(RelationMembersChangedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
         @Override
         public void primitivesRemoved(PrimitivesRemovedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
         @Override
         public void primitivesAdded(PrimitivesAddedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
         @Override
         public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
         @Override
         public void nodeMoved(NodeMovedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
         @Override
         public void dataChanged(DataChangedEvent event) {
-            refresh();
+            refresh(event.getDataset());
         }
 
-        private void refresh() {
-            if (editing) {
+        private void refresh(DataSet source) {
+            if (editing && source.getAllSelected().size() < Constants.MAX_SELECTION) {
                 junctionPane.refresh();
             }
         }
