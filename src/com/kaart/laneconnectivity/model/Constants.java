@@ -4,10 +4,21 @@ package com.kaart.laneconnectivity.model;
 import java.util.regex.Pattern;
 
 public final class Constants {
-	private Constants() {
-		// Do nothing
-	}
+    private Constants() {
+        // Do nothing
+    }
+
+    /** The standard OSM tag separator */
     static final String SEPARATOR = ";";
+    /** An escaped | (used for lane separation) for use in regex split statements */
+    static final String LANE_SEPARATOR = "\\|";
+    /** The connectivity separator for from lane to to lane(s) */
+    static final String CONNECTIVITY_TO_FROM_SEPARATOR = ":";
+    /** The connectivity "optional" values */
+    static final String CONNECTIVITY_OPTIONAL_LANES_REGEX = "\\([0-9]+\\)";
+    /** A compiled pattern for optional connectivities */
+    static final Pattern CONNECTIVITY_OPTIONAL_LANES_PATTERN = Pattern.compile(CONNECTIVITY_OPTIONAL_LANES_REGEX);
+
     static final String SPLIT_REGEX = "\\p{Zs}*[,:;]\\p{Zs}*";
     static final Pattern SPLIT_PATTERN = Pattern.compile(SPLIT_REGEX);
 
@@ -16,13 +27,17 @@ public final class Constants {
     static final String LENGTHS_KEY_LENGTHS_LEFT = "lengths:left";
     static final String LENGTHS_KEY_LENGTHS_RIGHT = "lengths:right";
 
-    static final String TYPE_TURNS = "connectivity";
-    static final String TYPE_CONNECTION = "connectivity";
-    static final String TYPE_CONNECTIVITY = "1:1|2:2|3:3|4:4";
+    /** The relation type for turnlanes relations */
+    static final String TYPE_TURNS = "turnlanes:turns";
+    /** The relation type for connectivity relations */
+    static final String TYPE_CONNECTIVITY = "connectivity";
 
-    static final String TURN_ROLE_VIA = "via";
-    static final String TURN_ROLE_FROM = "from";
-    static final String TURN_ROLE_TO = "to";
+    /** The standard "via" role */
+    static final String ROLE_VIA = "via";
+    /** The standard "from" role */
+    static final String ROLE_FROM = "from";
+    /** The standard "to" role */
+    static final String ROLE_TO = "to";
 
     static final String TURN_KEY_LANES = "lanes";
     static final String TURN_KEY_EXTRA_LANES = "lanes:extra";

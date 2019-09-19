@@ -115,7 +115,7 @@ public class Validator {
             final String type = r.get("type");
             if (Constants.TYPE_LENGTHS.equals(type)) {
                 lenghts.add(r);
-            } else if (Constants.TYPE_TURNS.equals(type)) {
+            } else if (Constants.TYPE_CONNECTIVITY.equals(type)) {
                 turns.add(r);
             }
         }
@@ -292,8 +292,8 @@ public class Validator {
         final List<Issue> issues = new ArrayList<>();
 
         try {
-            final Way from = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_FROM);
-            final Way to = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_TO);
+            final Way from = TurnlanesUtils.getMemberWay(r, Constants.ROLE_FROM);
+            final Way to = TurnlanesUtils.getMemberWay(r, Constants.ROLE_TO);
 
             if (from.firstNode().equals(from.lastNode())) {
                 issues.add(Issue.newError(r, from, "The from-way both starts as well as ends at the via-node."));
@@ -306,11 +306,11 @@ public class Validator {
             }
 
             final Node fromJunctionNode;
-            final List<RelationMember> viaMembers = TurnlanesUtils.getMembers(r, Constants.TURN_ROLE_VIA);
+            final List<RelationMember> viaMembers = TurnlanesUtils.getMembers(r, Constants.ROLE_VIA);
             if (viaMembers.isEmpty()) {
-                throw UnexpectedDataException.Kind.NO_MEMBER.chuck(Constants.TURN_ROLE_VIA);
+                throw UnexpectedDataException.Kind.NO_MEMBER.chuck(Constants.ROLE_VIA);
             } else if (viaMembers.get(0).isWay()) {
-                final List<Way> vias = TurnlanesUtils.getMemberWays(r, Constants.TURN_ROLE_VIA);
+                final List<Way> vias = TurnlanesUtils.getMemberWays(r, Constants.ROLE_VIA);
 
                 fromJunctionNode = TurnlanesUtils.lineUp(from, vias.get(0));
                 Node current = fromJunctionNode;
@@ -323,7 +323,7 @@ public class Validator {
                     current = TurnlanesUtils.getOppositeEnd(via, current);
                 }
             } else {
-                final Node via = TurnlanesUtils.getMemberNode(r, Constants.TURN_ROLE_VIA);
+                final Node via = TurnlanesUtils.getMemberNode(r, Constants.ROLE_VIA);
 
                 if (!from.isFirstLastNode(via)) {
                     issues.add(Issue.newError(r, from, "The from-way does not start or end at the via-node."));

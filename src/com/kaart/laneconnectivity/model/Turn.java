@@ -20,11 +20,30 @@ import org.openstreetmap.josm.data.osm.Way;
 import com.kaart.laneconnectivity.CollectionUtils;
 
 public final class Turn {
+    /**
+     * Get the relations that affect the primitive
+     * @param c The {@code ModelContainer} which contains a model? TODO rephrase later
+     * @param role The role that the primitive must have in the relation
+     * @param primitive The OsmPrimitive that may have relations
+     * @return A set of relations that contain the primitive with the specified role and match {@link Constants#TYPE_CONNECTION}
+     */
     static Set<Turn> load(ModelContainer c, String role, OsmPrimitive primitive) {
+        return load(c, role, primitive, Constants.TYPE_CONNECTIVITY);
+    }
+
+    /**
+     * Get the relations that affect the primitive
+     * @param c The {@code ModelContainer} which contains a model? TODO rephrase later
+     * @param role The role that the primitive must have in the relation
+     * @param primitive The OsmPrimitive that may have relations
+     * @param relationType The relation type to load
+     * @return A set of relations that contain the primitive with the specified role and match the relation type.
+     */
+    static Set<Turn> load(ModelContainer c, String role, OsmPrimitive primitive, String relationType) {
         final Set<Turn> result = new HashSet<>();
 
         for (Relation r : org.openstreetmap.josm.tools.Utils.filteredCollection(primitive.getReferrers(), Relation.class)) {
-            if (!r.isUsable() || !r.get("type").equals(Constants.TYPE_TURNS)) {
+            if (!r.isUsable() || !r.get("type").equals(relationType)) {
                 continue;
             }
 
@@ -40,7 +59,7 @@ public final class Turn {
 
     static Set<Turn> load(ModelContainer c, Relation r) {
         for (RelationMember m : r.getMembers()) {
-            if (m.getRole().equals(Constants.TURN_ROLE_VIA)) {
+            if (m.getRole().equals(Constants.ROLE_VIA)) {
                 if (m.isNode()) {
                     return loadWithViaNode(c, r);
                 } else if (m.isWay()) {
@@ -53,14 +72,14 @@ public final class Turn {
     }
 
     private static Set<Turn> loadWithViaWays(ModelContainer c, Relation r) {
-        final Way from = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_FROM);
-        final Way to = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_TO);
+        final Way from = TurnlanesUtils.getMemberWay(r, Constants.ROLE_FROM);
+        final Way to = TurnlanesUtils.getMemberWay(r, Constants.ROLE_TO);
 
         if (!c.hasRoad(from) || !c.hasRoad(to)) {
             return Collections.emptySet();
         }
 
-        final List<Way> tmp = TurnlanesUtils.getMemberWays(r, Constants.TURN_ROLE_VIA);
+        final List<Way> tmp = TurnlanesUtils.getMemberWays(r, Constants.ROLE_VIA);
         final LinkedList<Road> via = new LinkedList<>();
 
         final Road.End fromRoadEnd = c.getJunction(TurnlanesUtils.lineUp(from, tmp.get(0))).getRoadEnd(from);
@@ -123,9 +142,9 @@ public final class Turn {
     }
 
     private static Set<Turn> loadWithViaNode(ModelContainer c, Relation r) {
-        final Way from = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_FROM);
-        final Node via = TurnlanesUtils.getMemberNode(r, Constants.TURN_ROLE_VIA);
-        final Way to = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_TO);
+        final Way from = TurnlanesUtils.getMemberWay(r, Constants.ROLE_FROM);
+        final Node via = TurnlanesUtils.getMemberNode(r, Constants.ROLE_VIA);
+        final Way to = TurnlanesUtils.getMemberWay(r, Constants.ROLE_TO);
 
         if (!c.hasRoad(from) || !c.hasJunction(via) || !c.hasRoad(to)) {
             return Collections.emptySet();
@@ -137,11 +156,8 @@ public final class Turn {
         final Road.End toRoadEnd = j.getRoadEnd(to);
 
         final Set<Turn> result = new HashSet<>();
-        for (int i : indices(r, Constants.TURN_KEY_LANES)) {
+        for (int i : indices(r, Constants.TYPE_CONNECTIVITY)) {
             result.add(new Turn(r, fromRoadEnd.getLane(Lane.Kind.REGULAR, i), Collections.<Road>emptyList(), toRoadEnd));
-        }
-        for (int i : indices(r, Constants.TURN_KEY_EXTRA_LANES)) {
-            result.add(new Turn(r, fromRoadEnd.getExtraLane(i), Collections.<Road>emptyList(), toRoadEnd));
         }
         return result;
     }

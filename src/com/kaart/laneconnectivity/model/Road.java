@@ -240,7 +240,7 @@ public class Road {
             final boolean left = lane.getKind() == Lane.Kind.EXTRA_LEFT;
             final Relation rel = left ? lengthsLeft : lengthsRight;
 
-            for (Turn t : Turn.load(getContainer(), Constants.TURN_ROLE_FROM, getWay())) {
+            for (Turn t : Turn.load(getContainer(), Constants.ROLE_FROM, getWay())) {
                 t.fixReferences(cmd, left, lane.getIndex());
             }
 
@@ -266,7 +266,7 @@ public class Road {
         }
 
         void initialize() {
-            this.turns = Collections.unmodifiableSet(Turn.load(getContainer(), Constants.TURN_ROLE_TO, getWay()));
+            this.turns = Collections.unmodifiableSet(Turn.load(getContainer(), Constants.ROLE_TO, getWay()));
 
             for (Lane l : lanes) {
                 l.initialize();

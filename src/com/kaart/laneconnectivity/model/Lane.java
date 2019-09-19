@@ -241,15 +241,15 @@ public class Lane {
             r = new Relation();
             r.put("type", Constants.TYPE_TURNS);
 
-            r.addMember(new RelationMember(Constants.TURN_ROLE_FROM, getOutgoingRoadEnd().getWay()));
+            r.addMember(new RelationMember(Constants.ROLE_FROM, getOutgoingRoadEnd().getWay()));
             if (via.isEmpty()) {
-                r.addMember(new RelationMember(Constants.TURN_ROLE_VIA, getOutgoingJunction().getNode()));
+                r.addMember(new RelationMember(Constants.ROLE_VIA, getOutgoingJunction().getNode()));
             } else {
                 for (Way w : TurnlanesUtils.flattenVia(getOutgoingJunction().getNode(), via, to.getJunction().getNode())) {
-                    r.addMember(new RelationMember(Constants.TURN_ROLE_VIA, w));
+                    r.addMember(new RelationMember(Constants.ROLE_VIA, w));
                 }
             }
-            r.addMember(new RelationMember(Constants.TURN_ROLE_TO, to.getWay()));
+            r.addMember(new RelationMember(Constants.ROLE_TO, to.getWay()));
 
             cmd.add(r);
         } else {
@@ -267,12 +267,12 @@ public class Lane {
     public void addConnection(List<Road> via, Road.End to) {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add connectivity"));
 
-        String connectivity = " ";
-        int laneCount1,laneCount2;
+        int laneCount1;
+        int laneCount2;
 
         Relation existing = null;
-        //this for loop dosent actully do anything.
-        //to clarify this loop is what checks if the realtion already exists, however this version only works for turnlane:turns with a lane tag on the relation
+        //this for loop doesn't actually do anything.
+        //to clarify this loop is what checks if the Relation already exists, however this version only works for turnlane:turns with a lane tag on the relation
         for (Turn t : to.getTurns()) {
             if (t.getFrom().getOutgoingRoadEnd().equals(getOutgoingRoadEnd()) && t.getVia().equals(via)) {
                 if (t.getFrom().equals(this)) {
@@ -287,23 +287,23 @@ public class Lane {
         //generic connectivity
         laneCount1 = Integer.parseInt(getOutgoingRoadEnd().getWay().get("lanes"));
         laneCount2 = Integer.parseInt(to.getWay().get("lanes"));
-        connectivity=genericConnectivity(laneCount1,laneCount2);
+        String connectivity = genericConnectivity(laneCount1, laneCount2);
 
         final Relation r;
         if (existing == null) {
             r = new Relation();
-            r.put("type", Constants.TYPE_CONNECTION);
-            r.put("connectivity",connectivity);
+            r.put("type", Constants.TYPE_CONNECTIVITY);
+            r.put(Constants.TYPE_CONNECTIVITY, connectivity);
 
-            r.addMember(new RelationMember(Constants.TURN_ROLE_FROM, getOutgoingRoadEnd().getWay()));
+            r.addMember(new RelationMember(Constants.ROLE_FROM, getOutgoingRoadEnd().getWay()));
             if (via.isEmpty()) {
-                r.addMember(new RelationMember(Constants.TURN_ROLE_VIA, getOutgoingJunction().getNode()));
+                r.addMember(new RelationMember(Constants.ROLE_VIA, getOutgoingJunction().getNode()));
             } else {
                 for (Way w : TurnlanesUtils.flattenVia(getOutgoingJunction().getNode(), via, to.getJunction().getNode())) {
-                    r.addMember(new RelationMember(Constants.TURN_ROLE_VIA, w));
+                    r.addMember(new RelationMember(Constants.ROLE_VIA, w));
                 }
             }
-            r.addMember(new RelationMember(Constants.TURN_ROLE_TO, to.getWay()));
+            r.addMember(new RelationMember(Constants.ROLE_TO, to.getWay()));
 
             cmd.add(r);
         } else {
@@ -341,7 +341,7 @@ public class Lane {
     }
 
     void initialize() {
-        final Set<Turn> turns = Turn.load(getContainer(), Constants.TURN_ROLE_FROM, getOutgoingRoadEnd().getWay());
+        final Set<Turn> turns = Turn.load(getContainer(), Constants.ROLE_FROM, getOutgoingRoadEnd().getWay());
 
         final Iterator<Turn> it = turns.iterator();
         while (it.hasNext()) {

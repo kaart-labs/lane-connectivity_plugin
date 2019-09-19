@@ -65,12 +65,12 @@ public final class ModelContainer {
         boolean closed = true;
 
         for (Relation r : org.openstreetmap.josm.tools.Utils.filteredCollection(w.getReferrers(), Relation.class)) {
-            if (!r.get("type").equals(Constants.TYPE_TURNS)) {
+            if (!r.get("type").equals(Constants.TYPE_CONNECTIVITY)) {
                 continue;
             }
 
             for (RelationMember m : r.getMembers()) {
-                if (m.getRole().equals(Constants.TURN_ROLE_VIA) && m.getMember().equals(w)) {
+                if (m.getRole().equals(Constants.ROLE_VIA) && m.getMember().equals(w)) {
                     closed &= close(closedNodes, closedWays, r);
                 }
             }
@@ -83,7 +83,7 @@ public final class ModelContainer {
         boolean closed = true;
 
         final List<Way> via = new ArrayList<>();
-        for (RelationMember m : TurnlanesUtils.getMembers(r, Constants.TURN_ROLE_VIA)) {
+        for (RelationMember m : TurnlanesUtils.getMembers(r, Constants.ROLE_VIA)) {
             if (m.isWay()) {
                 closed &= !closedWays.add(m.getWay());
                 via.add(m.getWay());
@@ -93,8 +93,8 @@ public final class ModelContainer {
         }
 
         if (!via.isEmpty()) {
-            final Way from = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_FROM);
-            final Way to = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_TO);
+            final Way from = TurnlanesUtils.getMemberWay(r, Constants.ROLE_FROM);
+            final Way to = TurnlanesUtils.getMemberWay(r, Constants.ROLE_TO);
 
             closed &= !closedNodes.add(TurnlanesUtils.lineUp(from, via.get(0)));
             closed &= !closedNodes.add(TurnlanesUtils.lineUp(via.get(via.size() - 1), to));
