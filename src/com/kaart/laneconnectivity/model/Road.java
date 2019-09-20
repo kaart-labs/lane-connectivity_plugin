@@ -18,9 +18,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Pair;
+
 import com.kaart.laneconnectivity.CollectionUtils;
 import com.kaart.laneconnectivity.model.Route.Segment;
-import org.openstreetmap.josm.tools.Pair;
 
 public class Road {
     public final class End {
@@ -190,6 +191,14 @@ public class Road {
             return lanes;
         }
 
+        /**
+         * Get lane of type Kind at a specific index
+         *
+         * @param kind  The kind of lane (see {@link Lane#Kind})
+         * @param index The index of the lane
+         * @return The lane at the specified index, if it exists
+         * @throws IllegalArgumentException if no such lane exists
+         */
         public Lane getLane(Lane.Kind kind, int index) {
             for (Lane l : lanes) {
                 if (l.getKind() == kind && l.getIndex() == index) {

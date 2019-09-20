@@ -20,7 +20,6 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -215,6 +214,9 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         wasShowing = isShowing;
     }
 
+    /**
+     * Redraw the UI for the junction pane
+     */
     void refresh() {
         if (isShowing && editing && selected.size() < Constants.MAX_SELECTION) {
             final Collection<Node> nodes = org.openstreetmap.josm.tools.Utils.filteredCollection(selected, Node.class);

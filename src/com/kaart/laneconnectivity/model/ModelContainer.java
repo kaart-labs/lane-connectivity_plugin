@@ -16,8 +16,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import com.kaart.laneconnectivity.CollectionUtils;
 import org.openstreetmap.josm.tools.Pair;
+
+import com.kaart.laneconnectivity.CollectionUtils;
 
 public final class ModelContainer {
 
@@ -160,6 +161,11 @@ public final class ModelContainer {
         this.leftDirection = leftDirection;
     }
 
+    /**
+     * Create a Set of Pairs of Way and Junctions
+     *
+     * @return A set of ways paired with a junction
+     */
     private Set<Pair<Way, Junction>> createPrimaryJunctions() {
         final Set<Pair<Way, Junction>> roads = new HashSet<>();
 

@@ -1,6 +1,8 @@
 package com.kaart.laneconnectivity.model;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,14 +10,18 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
+
+import com.kaart.laneconnectivity.TestUtilsCustom;
 
 public class TurnTest {
     /**
      * Setup test.
-     * 
+     *
      * @throws Exception if an error occurs
      */
     @Before
@@ -53,6 +59,30 @@ public class TurnTest {
         Assert.assertTrue(lane1.get(2));
         Assert.assertFalse(lane2.get(2));
         Assert.assertTrue(lane2.get(3));
+    }
+
+    @Test
+    public void testLoadVia() {
+        DataSet dataSet = new DataSet();
+        Way way1 = TestUtils.newWay("highway=residential lanes=2", new Node(new LatLon(0, 0)),
+                new Node(new LatLon(0.1, 0.1)));
+        Way way2 = TestUtils.newWay("highway=residential lanes=2", new Node(new LatLon(-0.2, 0.1)),
+                way1.firstNode());
+        Relation relation = TestUtils.newRelation("type=connectivity connectivity=1:1",
+                new RelationMember("from", way2), new RelationMember("via", way1.firstNode()),
+                new RelationMember("to", way1));
+        TestUtilsCustom.addPrimitivesToDataSet(dataSet, relation);
+        ModelContainer container = ModelContainer.create(Collections.singleton(way1.firstNode()),
+                Collections.emptyList());
+        Set<Turn> turns = Turn.load(container, relation);
+        Assert.assertEquals(1, turns.size());
+
+        relation.put("connectivity", "1:1|2:2");
+        way1.put("oneway", "yes");
+        way2.put("oneway", "yes");
+        container = container.recalculate();
+        turns = Turn.load(container, relation);
+        Assert.assertEquals(2, turns.size());
     }
 
 }
