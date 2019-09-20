@@ -62,7 +62,7 @@ public class TurnTest {
     }
 
     @Test
-    public void testLoadVia() {
+    public void testLoadViaNode() {
         DataSet dataSet = new DataSet();
         Way way1 = TestUtils.newWay("highway=residential lanes=2", new Node(new LatLon(0, 0)),
                 new Node(new LatLon(0.1, 0.1)));
@@ -85,4 +85,19 @@ public class TurnTest {
         Assert.assertEquals(2, turns.size());
     }
 
+    @Test
+    public void testLoadViaWays() {
+
+        DataSet dataSet = new DataSet();
+        Way way1 = TestUtils.newWay("highway=residential lanes=2", new Node(new LatLon(0, 0)),
+                new Node(new LatLon(0.1, 0.1)));
+        Way way2 = TestUtils.newWay("highway=residential lanes=2", new Node(new LatLon(-0.2, 0.1)), way1.firstNode());
+        Way way3 = TestUtils.newWay("highway=residential lanes=2", new Node(new LatLon(0.2, 0.2)), way1.lastNode());
+        Relation relation = TestUtils.newRelation("type=connectivity connectivity=1:1",
+                new RelationMember("from", way2), new RelationMember("via", way1), new RelationMember("to", way3));
+        TestUtilsCustom.addPrimitivesToDataSet(dataSet, relation);
+        ModelContainer container = ModelContainer.create(way1.getNodes(), Collections.singleton(way1));
+        Set<Turn> turns = Turn.load(container, relation);
+        Assert.assertEquals(1, turns.size());
+    }
 }

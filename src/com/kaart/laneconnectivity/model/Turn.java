@@ -121,7 +121,7 @@ public final class Turn {
 
         final Set<Turn> result = new HashSet<>();
         // TODO don't use keySet, use all of the information.
-        for (int i : indices(r, Constants.TURN_KEY_LANES).keySet()) {
+        for (int i : indices(r, Constants.TYPE_CONNECTIVITY).keySet()) {
             result.add(new Turn(r, fromRoadEnd.getLane(Lane.Kind.REGULAR, i), via, toRoadEnd));
         }
         return result;
@@ -238,20 +238,20 @@ public final class Turn {
 
     void remove(GenericCommand cmd) {
         // TODO don't use keySet, use all of the information.
-        final List<Integer> lanes = new ArrayList<>(indices(relation, Constants.TURN_KEY_LANES).keySet());
+        final List<Integer> connectivity = new ArrayList<>(indices(relation, Constants.TYPE_CONNECTIVITY).keySet());
         final List<Integer> extraLanes = new ArrayList<>(indices(relation, Constants.TURN_KEY_EXTRA_LANES).keySet());
 
         // TODO understand & document
-        if (lanes.size() + extraLanes.size() == 1 && (from.isExtra() ^ !lanes.isEmpty())) {
+        if (connectivity.size() + extraLanes.size() == 1 && (from.isExtra() ^ !connectivity.isEmpty())) {
             cmd.backup(relation).setDeleted(true);
             // relation.getDataSet().removePrimitive(relation.getPrimitiveId());
         } else if (from.isExtra()) {
             extraLanes.remove(Integer.valueOf(from.getIndex()));
         } else {
-            lanes.remove(Integer.valueOf(from.getIndex()));
+            connectivity.remove(Integer.valueOf(from.getIndex()));
         }
 
-        cmd.backup(relation).put(Constants.TURN_KEY_LANES, lanes.isEmpty() ? null : join(lanes));
+        cmd.backup(relation).put(Constants.TYPE_CONNECTIVITY, connectivity.isEmpty() ? null : join(connectivity));
         cmd.backup(relation).put(Constants.TURN_KEY_EXTRA_LANES, extraLanes.isEmpty() ? null : join(extraLanes));
     }
 
