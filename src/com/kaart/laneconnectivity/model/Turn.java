@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -183,6 +184,12 @@ public final class Turn {
         return result;
     }
 
+    /**
+     * Join a list of Integers using the {@link Constants#SEPARATOR}
+     *
+     * @param list The list of Integers to join
+     * @return The list of integers joined by the separator
+     */
     static String join(List<Integer> list) {
         if (list.isEmpty()) {
             return null;
@@ -196,6 +203,30 @@ public final class Turn {
 
         builder.setLength(builder.length() - Constants.SEPARATOR.length());
         return builder.toString();
+    }
+
+    /**
+     * Join a map of maps to conform with the specification for connectivity
+     *
+     * @param maps The map conforming to
+     *             {@code Map<laneFrom, Map<laneTo, isOptional>>}
+     * @return The list of integers joined by the appropriate separators
+     */
+    public static String join(Map<Integer, Map<Integer, Boolean>> lanes) {
+        StringBuilder sb = new StringBuilder();
+        for (Entry<Integer, Map<Integer, Boolean>> entry : lanes.entrySet()) {
+            if (sb.length() > 0) {
+                sb.append("|");
+            }
+            if (entry.getValue().size() > 0) {
+                sb.append(entry.getKey()).append(":");
+                for (Entry<Integer, Boolean> connection : entry.getValue().entrySet()) {
+                    // TODO finish
+                    sb.append(connection.getKey());
+                }
+            }
+        }
+        return sb.toString();
     }
 
     private final Relation relation;

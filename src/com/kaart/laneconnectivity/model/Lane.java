@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.Node;
@@ -162,39 +164,6 @@ public class Lane {
         return index;
     }
 
-    public String genericConnectivity(int laneCount1,int laneCount2){
-      String connectivity =null;
-      String connectivity2;
-      if (laneCount1==laneCount2) {
-        for(int i=0;i <laneCount1;i++){
-          if(i==0)connectivity = "1:1";
-          else{
-            connectivity2 = "|" + (i + 1) + ":" + (i + 1);
-            connectivity += connectivity2;
-          }
-        }
-      }
-      else if(laneCount1>laneCount2){
-        for(int i=0;i<laneCount2;i++){
-          if(i==0)connectivity = "1:1";
-          else{
-            connectivity2 = "|" + (i + 1) + ":" + (i + 1);
-            connectivity = connectivity + connectivity2;
-          }
-        }
-      }
-      else if(laneCount1<laneCount2){
-        for(int i=0;i<laneCount1;i++){
-          if(i==0)connectivity = "1:1";
-          else{
-            connectivity2 = "|" + (i + 1) + ":" + (i + 1);
-            connectivity = connectivity + connectivity2;
-          }
-        }
-      }
-      return connectivity;
-    }
-
     public Junction getOutgoingJunction() {
         return getOutgoingRoadEnd().getJunction();
     }
@@ -264,6 +233,12 @@ public class Lane {
         UndoRedoHandler.getInstance().add(cmd);
     }
 //here is my stuff, currently does not work for everything i need. has bug where keeps added relations even after it exists,
+    /**
+     * Add a connectivity relation to a set of roads.
+     *
+     * @param via The via node/ways
+     * @param to  The ending road
+     */
     public void addConnection(List<Road> via, Road.End to) {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add connectivity"));
 
@@ -284,16 +259,10 @@ public class Lane {
             }
         }
 
-        //generic connectivity
-        laneCount1 = Integer.parseInt(getOutgoingRoadEnd().getWay().get("lanes"));
-        laneCount2 = Integer.parseInt(to.getWay().get("lanes"));
-        String connectivity = genericConnectivity(laneCount1, laneCount2);
-
         final Relation r;
         if (existing == null) {
             r = new Relation();
             r.put("type", Constants.TYPE_CONNECTIVITY);
-            r.put(Constants.TYPE_CONNECTIVITY, connectivity);
 
             r.addMember(new RelationMember(Constants.ROLE_FROM, getOutgoingRoadEnd().getWay()));
             if (via.isEmpty()) {
@@ -310,12 +279,13 @@ public class Lane {
             r = existing;
         }
 
-        //existing = r;//feeble attempt//have tried some things with this but agian they dont work
-        //adds lane and its index to Relation worthless for our plugin, that is unless ian would like to keep this functinality
-        //final String key = isExtra() ? Constants.TURN_KEY_EXTRA_LANES : Constants.TURN_KEY_LANES;//will not build without
-        //final List<Integer> lanes = Turn.indices(r, key);//Will not work without this line // sets lane tag
-        //lanes.add(getIndex()); //1st test no longer added lane tag
-        //cmd.backup(r).put(key, Turn.join(lanes)); //2nd test no longer adds lane tag
+        // generic connectivity
+        final String key = Constants.TYPE_CONNECTIVITY;
+        final Map<Integer, Map<Integer, Boolean>> lanes = Turn.indices(r, key);
+        Map<Integer, Boolean> temporaryConnectMap = new TreeMap<>();
+        temporaryConnectMap.put(Math.min(getIndex(), to.getLanes().size()), false);
+        lanes.put(getIndex(), temporaryConnectMap);
+        cmd.backup(r).put(key, Turn.join(lanes));
 
         UndoRedoHandler.getInstance().add(cmd);
     }
