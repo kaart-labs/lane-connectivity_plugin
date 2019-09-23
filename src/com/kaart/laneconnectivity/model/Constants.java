@@ -46,5 +46,6 @@ public final class Constants {
 
     /** The maximum selection of objects that the UI will look at */
     public static final int MAX_SELECTION = 100;
+    public static final String COMMA_SEPARATOR = ",";
 
 }

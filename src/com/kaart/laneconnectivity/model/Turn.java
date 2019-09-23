@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.Node;
@@ -138,7 +139,7 @@ public final class Turn {
         final String joined = r.get(key);
 
         if (joined == null) {
-            return Collections.emptyMap();
+            return new TreeMap<>();
         }
 
         final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
@@ -213,20 +214,26 @@ public final class Turn {
      * @return The list of integers joined by the appropriate separators
      */
     public static String join(Map<Integer, Map<Integer, Boolean>> lanes) {
-        StringBuilder sb = new StringBuilder();
+        ArrayList<String> connections = new ArrayList<>();
         for (Entry<Integer, Map<Integer, Boolean>> entry : lanes.entrySet()) {
-            if (sb.length() > 0) {
-                sb.append("|");
-            }
+            StringBuilder currentConnection = new StringBuilder();
+            currentConnection.append(entry.getKey()).append(Constants.CONNECTIVITY_TO_FROM_SEPARATOR);
             if (entry.getValue().size() > 0) {
-                sb.append(entry.getKey()).append(":");
+                ArrayList<String> laneConnections = new ArrayList<>();
                 for (Entry<Integer, Boolean> connection : entry.getValue().entrySet()) {
-                    // TODO finish
-                    sb.append(connection.getKey());
+                    StringBuilder add = new StringBuilder();
+                    if (connection.getValue())
+                        add.append("(");
+                    add.append(connection.getKey());
+                    if (connection.getValue())
+                        add.append(")");
+                    laneConnections.add(add.toString());
                 }
+                currentConnection.append(String.join(Constants.COMMA_SEPARATOR, laneConnections));
             }
+            connections.add(currentConnection.toString());
         }
-        return sb.toString();
+        return String.join("|", connections);
     }
 
     private final Relation relation;

@@ -282,9 +282,11 @@ public class Lane {
         // generic connectivity
         final String key = Constants.TYPE_CONNECTIVITY;
         final Map<Integer, Map<Integer, Boolean>> lanes = Turn.indices(r, key);
-        Map<Integer, Boolean> temporaryConnectMap = new TreeMap<>();
+        Map<Integer, Boolean> temporaryConnectMap = lanes.containsKey(getIndex()) ? lanes.get(getIndex())
+                : new TreeMap<>();
+        // TODO use the actual lane the line was drawn to.
         temporaryConnectMap.put(Math.min(getIndex(), to.getLanes().size()), false);
-        lanes.put(getIndex(), temporaryConnectMap);
+        lanes.putIfAbsent(getIndex(), temporaryConnectMap);
         cmd.backup(r).put(key, Turn.join(lanes));
 
         UndoRedoHandler.getInstance().add(cmd);
