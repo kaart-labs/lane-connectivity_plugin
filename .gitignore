@@ -6,6 +6,7 @@
 
 # Build directory
 build/
+javadoc/
 
 # BlueJ files
 *.ctxt
@@ -28,3 +29,6 @@ hs_err_pid*
 /bintest/
 /test/report/
 /test/jacoco.exec
+
+# Other files to ignore
+/.gradle/
