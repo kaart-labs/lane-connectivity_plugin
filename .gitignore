@@ -8,6 +8,9 @@
 build/
 javadoc/
 
+#Patch files
+*.patch
+
 # BlueJ files
 *.ctxt
 
