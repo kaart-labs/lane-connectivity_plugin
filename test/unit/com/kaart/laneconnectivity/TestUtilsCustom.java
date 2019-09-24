@@ -41,7 +41,8 @@ public final class TestUtilsCustom {
                         dataSet.addPrimitive(node);
                 }
             }
-            dataSet.addPrimitive(primitive);
+            if (primitive.getDataSet() == null)
+                dataSet.addPrimitive(primitive);
         }
     }
 }
