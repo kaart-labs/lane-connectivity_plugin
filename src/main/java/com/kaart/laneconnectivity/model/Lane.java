@@ -69,6 +69,12 @@ public class Lane {
         return result;
     }
 
+    /**
+     * Count the roads to draw in the gui
+     * @param w The way to get the lanes from
+     * @param end The node to get lanes at (mostly affects oneways)
+     * @return The number of lanes to draw for each direction (oneway may return 0)
+     */
     static int getRegularCount(Way w, Node end) {
         final int count = TurnlanesUtils.parseIntTag(w, "lanes");
         final boolean forward = w.lastNode().equals(end);
