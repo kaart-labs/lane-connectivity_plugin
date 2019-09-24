@@ -285,7 +285,8 @@ public class Lane {
         Map<Integer, Boolean> temporaryConnectMap = lanes.containsKey(getIndex()) ? lanes.get(getIndex())
                 : new TreeMap<>();
         // TODO use the actual lane the line was drawn to.
-        temporaryConnectMap.put(Math.min(getIndex(), to.getLanes().size()), false);
+        int numberOfLanes = to.getWay().isOneway() != 0 ? Integer.parseInt(to.getWay().get("lanes")) : to.getLanes().size();
+        temporaryConnectMap.put(Math.min(getIndex(), numberOfLanes), false);
         lanes.putIfAbsent(getIndex(), temporaryConnectMap);
         cmd.backup(r).put(key, Turn.join(lanes));
 
