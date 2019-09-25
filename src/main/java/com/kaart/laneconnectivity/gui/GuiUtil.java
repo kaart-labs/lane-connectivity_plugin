@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 
 import com.kaart.laneconnectivity.model.Junction;
 
-final class GuiUtil {
+public final class GuiUtil {
 
     private GuiUtil() {
         // Hide default constructor for utilities classes
@@ -60,7 +60,7 @@ final class GuiUtil {
         return new Point2D.Double(x, y);
     }
 
-    static Point2D closest(Line2D l, Point2D p) {
+    public static Point2D closest(Line2D l, Point2D p) {
         final Point2D lv = vector(l.getP1(), l.getP2());
         final double numerator = dot(vector(l.getP1(), p), lv);
 

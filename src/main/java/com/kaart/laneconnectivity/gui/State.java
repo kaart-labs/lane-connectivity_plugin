@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.kaart.laneconnectivity.gui.RoadGui.ViaConnector;
+import com.kaart.laneconnectivity.gui.connector.ViaConnector;
 import com.kaart.laneconnectivity.model.Junction;
 import com.kaart.laneconnectivity.model.Lane;
 import com.kaart.laneconnectivity.model.Road;
 
-abstract class State {
+public abstract class State {
     static class AllTurns extends State {
         private final State wrapped;
 
@@ -24,17 +24,17 @@ abstract class State {
         }
 
         @Override
-        State carryOver(GuiContainer newContainer) {
+        public State carryOver(GuiContainer newContainer) {
             return new AllTurns(wrapped.carryOver(newContainer));
         }
     }
 
-    static class Connecting extends State {
+    public static class Connecting extends State {
         private final Lane lane;
-        private final List<RoadGui.ViaConnector> vias;
+        private final List<ViaConnector> vias;
 
         public Connecting(Lane lane) {
-            this(lane, Collections.<RoadGui.ViaConnector>emptyList());
+            this(lane, Collections.<ViaConnector>emptyList());
         }
 
         public Connecting(Lane lane, List<ViaConnector> vias) {
@@ -42,14 +42,14 @@ abstract class State {
             this.vias = vias;
         }
 
-        public Connecting next(RoadGui.ViaConnector via) {
+        public Connecting next(ViaConnector via) {
             if (vias.isEmpty()) {
                 return new Connecting(lane, Collections.unmodifiableList(Arrays.asList(via)));
             }
 
-            final List<RoadGui.ViaConnector> tmp = new ArrayList<>(vias.size() + 1);
+            final List<ViaConnector> tmp = new ArrayList<>(vias.size() + 1);
             final boolean even = (vias.size() & 1) == 0;
-            final RoadGui.ViaConnector last = vias.get(vias.size() - 1);
+            final ViaConnector last = vias.get(vias.size() - 1);
 
             if (last.equals(via) || !even && last.getRoadEnd().getJunction().equals(via.getRoadEnd().getJunction())) {
                 return pop().next(via);
@@ -63,7 +63,7 @@ abstract class State {
                 }
             }
 
-            for (RoadGui.ViaConnector v : vias) {
+            for (ViaConnector v : vias) {
                 tmp.add(v);
 
                 if (!(even && v.equals(last)) && v.getRoadEnd().getJunction().equals(via.getRoadEnd().getJunction())) {
@@ -79,11 +79,11 @@ abstract class State {
             return vias.isEmpty() ? lane.getOutgoingJunction() : vias.get(vias.size() - 1).getRoadEnd().getJunction();
         }
 
-        public RoadGui.ViaConnector getBacktrackViaConnector() {
+        public ViaConnector getBacktrackViaConnector() {
             return vias.size() < 2 ? null : vias.get(vias.size() - 2);
         }
 
-        public List<RoadGui.ViaConnector> getViaConnectors() {
+        public List<ViaConnector> getViaConnectors() {
             return vias;
         }
 
@@ -108,10 +108,10 @@ abstract class State {
         }
     }
 
-    static class Dirty extends State {
+    public static class Dirty extends State {
         private final State wrapped;
 
-        Dirty(State wrapped) {
+        public Dirty(State wrapped) {
             this.wrapped = wrapped;
         }
 
@@ -120,7 +120,7 @@ abstract class State {
         }
 
         @Override
-        State carryOver(GuiContainer newContainer) {
+        public State carryOver(GuiContainer newContainer) {
             return new Dirty(wrapped.carryOver(newContainer));
         }
     }
@@ -129,10 +129,10 @@ abstract class State {
         Default() {}
     }
 
-    static class IncomingActive extends State {
+    public static class IncomingActive extends State {
         private final Road.End roadEnd;
 
-        IncomingActive(Road.End roadEnd) {
+        public IncomingActive(Road.End roadEnd) {
             this.roadEnd = roadEnd;
         }
 
@@ -141,7 +141,7 @@ abstract class State {
         }
 
         @Override
-        State carryOver(GuiContainer newContainer) {
+        public State carryOver(GuiContainer newContainer) {
             if (newContainer.getModel().equals(roadEnd.getRoad().getContainer())) {
                 return this;
             }
@@ -158,10 +158,10 @@ abstract class State {
         }
     }
 
-    static class OutgoingActive extends State {
+    public static class OutgoingActive extends State {
         private final LaneGui lane;
 
-        OutgoingActive(LaneGui lane) {
+        public OutgoingActive(LaneGui lane) {
             this.lane = lane;
         }
 
@@ -170,7 +170,7 @@ abstract class State {
         }
 
         @Override
-        State delete() {
+        public State delete() {
             if (!lane.getModel().isExtra()) {
                 return this;
             }
@@ -181,7 +181,7 @@ abstract class State {
         }
 
         @Override
-        State carryOver(GuiContainer newContainer) {
+        public State carryOver(GuiContainer newContainer) {
             if (newContainer.equals(lane.getContainer())) {
                 return this;
             }
@@ -205,11 +205,11 @@ abstract class State {
         }
     }
 
-    State delete() {
+    public State delete() {
         return this;
     }
 
-    State carryOver(GuiContainer newContainer) {
+    public State carryOver(GuiContainer newContainer) {
         return this;
     }
 }

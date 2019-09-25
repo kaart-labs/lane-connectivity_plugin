@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.gui;
 
+import static com.kaart.laneconnectivity.gui.GuiUtil.angle;
+import static com.kaart.laneconnectivity.gui.GuiUtil.cpf;
+import static com.kaart.laneconnectivity.gui.GuiUtil.minAngleDiff;
+import static com.kaart.laneconnectivity.gui.GuiUtil.relativePoint;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -9,10 +13,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.signum;
 import static java.lang.Math.sin;
-import static com.kaart.laneconnectivity.gui.GuiUtil.angle;
-import static com.kaart.laneconnectivity.gui.GuiUtil.cpf;
-import static com.kaart.laneconnectivity.gui.GuiUtil.minAngleDiff;
-import static com.kaart.laneconnectivity.gui.GuiUtil.relativePoint;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
  *
  * @author Ben Schulz
  */
-abstract class Path {
+public abstract class Path {
     private static final class SimplePathIterator implements PathIterator {
         private final SimplePathIterator previous;
 

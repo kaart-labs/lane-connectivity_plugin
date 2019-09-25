@@ -15,10 +15,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -37,86 +35,13 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 
+import com.kaart.laneconnectivity.gui.connector.IncomingConnector;
+import com.kaart.laneconnectivity.gui.connector.ViaConnector;
 import com.kaart.laneconnectivity.model.Lane;
 import com.kaart.laneconnectivity.model.Road;
 import com.kaart.laneconnectivity.model.TurnlanesUtils;
 
-class RoadGui {
-    final class ViaConnector extends InteractiveElement {
-        private final Road.End end;
-
-        private final Line2D line;
-        private final float strokeWidth;
-
-        ViaConnector(Road.End end) {
-            this.end = end;
-            this.line = new Line2D.Double(getLeftCorner(end), getRightCorner(end));
-            this.strokeWidth = (float) (3 * getContainer().getLaneWidth() / 4);
-        }
-
-        @Override
-        void paint(Graphics2D g2d, State state) {
-            if (isVisible(state)) {
-                g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-                g2d.setColor(Color.ORANGE);
-                g2d.draw(line);
-            }
-        }
-
-        @Override
-        boolean contains(Point2D p, State state) {
-            if (!isVisible(state)) {
-                return false;
-            }
-
-            final Point2D closest = closest(line, p);
-            return p.distance(closest) <= strokeWidth / 2;
-        }
-
-        private boolean isVisible(State state) {
-            if (!(state instanceof State.Connecting)) {
-                return false;
-            }
-
-            final State.Connecting s = (State.Connecting) state;
-
-            if (s.getJunction().equals(end.getJunction()) || equals(s.getBacktrackViaConnector())) {
-                return true;
-            } else if (!s.getViaConnectors().isEmpty()
-                && s.getViaConnectors().get(s.getViaConnectors().size() - 1).getRoadModel().equals(getRoadModel())) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private Road getRoadModel() {
-            return getModel();
-        }
-
-        public RoadGui getRoad() {
-            return RoadGui.this;
-        }
-
-        @Override
-        Type getType() {
-            return Type.VIA_CONNECTOR;
-        }
-
-        @Override
-        int getZIndex() {
-            return 1;
-        }
-
-        public Road.End getRoadEnd() {
-            return end;
-        }
-
-        public Point2D getCenter() {
-            return relativePoint(line.getP1(), line.getP1().distance(line.getP2()) / 2, angle(line.getP1(), line.getP2()));
-        }
-    }
-
+public class RoadGui {
     private final class Extender extends InteractiveElement {
         private final Road.End end;
         private final Way way;
@@ -130,6 +55,7 @@ class RoadGui {
         }
 
         @Override
+        public
         void paint(Graphics2D g2d, State state) {
             g2d.setStroke(getContainer().getConnectionStroke());
             g2d.setColor(Color.CYAN);
@@ -137,6 +63,7 @@ class RoadGui {
         }
 
         @Override
+        public
         boolean contains(Point2D p, State state) {
             final BasicStroke stroke = (BasicStroke) getContainer().getConnectionStroke();
             final double strokeWidth = stroke.getLineWidth();
@@ -146,17 +73,20 @@ class RoadGui {
         }
 
         @Override
+        public
         State click(State old) {
             end.extend(way);
             return new State.Invalid(old);
         }
 
         @Override
+        public
         Type getType() {
             return Type.EXTENDER;
         }
 
         @Override
+        public
         int getZIndex() {
             return 0;
         }
@@ -177,7 +107,7 @@ class RoadGui {
             final Point2D lc = getLeftCorner(end);
             final Point2D rc = getRightCorner(end);
 
-            final double r = connectorRadius;
+            final double r = getConnectorRadius();
             final double cx;
             final double cy;
             if (kind == Lane.Kind.EXTRA_LEFT) {
@@ -196,6 +126,7 @@ class RoadGui {
         }
 
         @Override
+        public
         void paint(Graphics2D g2d, State state) {
             if (!isVisible()) {
                 return;
@@ -204,11 +135,11 @@ class RoadGui {
             g2d.setColor(Color.DARK_GRAY);
             g2d.fill(background);
 
-            final double l = 2 * connectorRadius / 3;
+            final double l = 2 * getConnectorRadius() / 3;
             final Line2D v = new Line2D.Double(center.getX(), center.getY() - l, center.getX(), center.getY() + l);
             final Line2D h = new Line2D.Double(center.getX() - l, center.getY(), center.getX() + l, center.getY());
 
-            g2d.setStroke(new BasicStroke((float) (connectorRadius / 5)));
+            g2d.setStroke(new BasicStroke((float) (getConnectorRadius() / 5)));
             g2d.setColor(Color.WHITE);
             g2d.draw(v);
             g2d.draw(h);
@@ -219,16 +150,19 @@ class RoadGui {
         }
 
         @Override
+        public
         boolean contains(Point2D p, State state) {
             return isVisible() && background.contains(p);
         }
 
         @Override
+        public
         Type getType() {
             return Type.LANE_ADDER;
         }
 
         @Override
+        public
         int getZIndex() {
             return 2;
         }
@@ -237,133 +171,6 @@ class RoadGui {
         public State click(State old) {
             end.addLane(kind);
             return new State.Invalid(old);
-        }
-    }
-
-    final class IncomingConnector extends InteractiveElement {
-        private final Road.End end;
-        private final List<LaneGui> lanes;
-
-        private final Point2D center = new Point2D.Double();
-        private final Ellipse2D circle = new Ellipse2D.Double();
-
-        private IncomingConnector(Road.End end) {
-            this.end = end;
-
-            final List<LaneGui> lanes = new ArrayList<>(end.getLanes().size());
-            for (Lane l : end.getOppositeEnd().getLanes()) {
-                lanes.add(new LaneGui(RoadGui.this, l));
-            }
-            this.lanes = Collections.unmodifiableList(lanes);
-        }
-
-        @Override
-        public void paintBackground(Graphics2D g2d, State state) {
-            if (isActive(state)) {
-                final Composite old = g2d.getComposite();
-                g2d.setComposite(((AlphaComposite) old).derive(0.2f));
-
-                g2d.setColor(new Color(255, 127, 31));
-
-                for (LaneGui l : lanes) {
-                    l.fill(g2d);
-                }
-
-                g2d.setComposite(old);
-            }
-        }
-
-        @Override
-        public void paint(Graphics2D g2d, State state) {
-            if (isVisible(state)) {
-                final Composite old = g2d.getComposite();
-                if (isActive(state)) {
-                    g2d.setComposite(((AlphaComposite) old).derive(1f));
-                }
-
-                g2d.setColor(Color.LIGHT_GRAY);
-                g2d.fill(circle);
-
-                g2d.setComposite(old);
-            }
-        }
-
-        private boolean isActive(State state) {
-            if (!(state instanceof State.IncomingActive)) {
-                return false;
-            }
-
-            final Road.End roadEnd = ((State.IncomingActive) state).getRoadEnd();
-
-            return roadEnd.equals(getRoadEnd());
-        }
-
-        private boolean isVisible(State state) {
-            if (getModel().isPrimary() || !getRoadEnd().getJunction().isPrimary()
-                || getRoadEnd().getOppositeEnd().getLanes().isEmpty()) {
-                return false;
-            }
-
-            if (state instanceof State.Connecting) {
-                return ((State.Connecting) state).getJunction().equals(getRoadEnd().getJunction());
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean contains(Point2D p, State state) {
-            if (!isVisible(state)) {
-                return false;
-            } else if (circle.contains(p)) {
-                return true;
-            }
-
-            for (LaneGui l : lanes) {
-                if (l.contains(p)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        @Override
-        public Type getType() {
-            return Type.INCOMING_CONNECTOR;
-        }
-
-        @Override
-        public State activate(State old) {
-            return new State.IncomingActive(getRoadEnd());
-        }
-
-        public Point2D getCenter() {
-            return (Point2D) center.clone();
-        }
-
-        void move(double x, double y) {
-            final double r = connectorRadius;
-
-            center.setLocation(x, y);
-            circle.setFrame(x - r, y - r, 2 * r, 2 * r);
-        }
-
-        public Road.End getRoadEnd() {
-            return end;
-        }
-
-        public List<LaneGui> getLanes() {
-            return lanes;
-        }
-
-        @Override
-        int getZIndex() {
-            return 1;
-        }
-
-        public void add(LaneGui lane) {
-            lanes.add(lane);
         }
     }
 
@@ -489,7 +296,7 @@ class RoadGui {
     private final Road road;
     private final List<Segment> segments = new ArrayList<>();
 
-    final double connectorRadius;
+    private final double connectorRadius;
 
     RoadGui(GuiContainer container, Road road) {
         this.container = container;
@@ -499,8 +306,8 @@ class RoadGui {
         this.a = container.getGui(road.getFromEnd().getJunction());
         this.b = container.getGui(road.getToEnd().getJunction());
 
-        this.incomingA = new IncomingConnector(road.getFromEnd());
-        this.incomingB = new IncomingConnector(road.getToEnd());
+        this.incomingA = new IncomingConnector(this, road.getFromEnd());
+        this.incomingB = new IncomingConnector(this, road.getToEnd());
 
         final List<Point2D> bends = new ArrayList<>();
         final List<Node> nodes = road.getRoute().getNodes();
@@ -543,7 +350,7 @@ class RoadGui {
         return GuiUtil.line(getCorner(end, false), getAngle(end) + PI);
     }
 
-    private Point2D getLeftCorner(Road.End end) {
+    public Point2D getLeftCorner(Road.End end) {
         if (this.container.getModel().isLeftDirection()) {
             return getCorner(end, false);
         } else {
@@ -551,7 +358,7 @@ class RoadGui {
         }
     }
 
-    private Point2D getRightCorner(Road.End end) {
+    public Point2D getRightCorner(Road.End end) {
         if (this.container.getModel().isLeftDirection()) {
             return getCorner(end, true);
         } else {
@@ -559,7 +366,7 @@ class RoadGui {
         }
     }
 
-    private Point2D getCorner(Road.End end, boolean left) {
+    public Point2D getCorner(Road.End end, boolean left) {
         final JunctionGui j = end.isFromEnd() ? a : b;
 
         double w = left ? getWidth(end, false) : getWidth(end, true);
@@ -605,8 +412,8 @@ class RoadGui {
         result.addAll(paintLanes(g2d));
 
         if (getModel().isPrimary()) {
-            result.add(new ViaConnector(getModel().getFromEnd()));
-            result.add(new ViaConnector(getModel().getToEnd()));
+            result.add(new ViaConnector(this, getModel().getFromEnd()));
+            result.add(new ViaConnector(this, getModel().getToEnd()));
         } else {
             result.addAll(laneAdders());
             result.addAll(extenders(getModel().getFromEnd()));
@@ -911,5 +718,12 @@ class RoadGui {
 
     public List<LaneGui> getLanes(Road.End end) {
         return getConnector(end.getOppositeEnd()).getLanes();
+    }
+
+    /**
+     * @return the connectorRadius
+     */
+    public double getConnectorRadius() {
+        return connectorRadius;
     }
 }

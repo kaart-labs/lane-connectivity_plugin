@@ -49,6 +49,7 @@ class JunctionGui {
         }
 
         @Override
+        public
         void paint(Graphics2D g2d, State state) {
             if (isVisible(state)) {
                 g2d.setStroke(getContainer().getConnectionStroke());
@@ -100,6 +101,7 @@ class JunctionGui {
         }
 
         @Override
+        public
         boolean contains(Point2D p, State state) {
             if (!isVisible(state)) {
                 return false;
@@ -133,16 +135,19 @@ class JunctionGui {
         }
 
         @Override
+        public
         Type getType() {
             return Type.TURN_CONNECTION;
         }
 
         @Override
+        public
         int getZIndex() {
             return 0;
         }
 
         @Override
+        public
         boolean beginDrag(double x, double y) {
             dragBegin = new Point2D.Double(x, y);
             dragOffsetX = 0;
@@ -151,6 +156,7 @@ class JunctionGui {
         }
 
         @Override
+        public
         State drag(double x, double y, InteractiveElement target, State old) {
             dragOffsetX = x - dragBegin.getX();
             dragOffsetY = y - dragBegin.getY();
@@ -158,6 +164,7 @@ class JunctionGui {
         }
 
         @Override
+        public
         State drop(double x, double y, InteractiveElement target, State old) {
             drag(x, y, target, old);
 
@@ -172,7 +179,7 @@ class JunctionGui {
         }
 
         private boolean isRemoveDragOffset() {
-            final double r = getContainer().getGui(turn.getFrom().getRoad()).connectorRadius;
+            final double r = getContainer().getGui(turn.getFrom().getRoad()).getConnectorRadius();
             final double max = r - strokeWidth() / 2;
             return hypot(dragOffsetX, dragOffsetY) > max;
         }

@@ -1,31 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.gui;
 
+import static com.kaart.laneconnectivity.gui.GuiUtil.area;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static com.kaart.laneconnectivity.gui.GuiUtil.area;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.kaart.laneconnectivity.gui.RoadGui.IncomingConnector;
+import com.kaart.laneconnectivity.gui.connector.OutgoingConnector;
 import com.kaart.laneconnectivity.model.Lane;
-import com.kaart.laneconnectivity.model.Road;
 
-final class LaneGui {
+public final class LaneGui {
     final class LengthSlider extends InteractiveElement {
         private final Point2D center = new Point2D.Double();
         private final Ellipse2D circle = new Ellipse2D.Double();
@@ -66,25 +61,28 @@ final class LaneGui {
         }
 
         @Override
+        public
         boolean beginDrag(double x, double y) {
             dragDelta = new Point2D.Double(center.getX() - x, center.getY() - y);
             return true;
         }
 
         @Override
+        public
         State drag(double x, double y, InteractiveElement target, State old) {
             move(x + dragDelta.getX(), y + dragDelta.getY(), false);
             return new State.Dirty(old);
         }
 
         @Override
+        public
         State drop(double x, double y, InteractiveElement target, State old) {
             move(x + dragDelta.getX(), y + dragDelta.getY(), true);
             return old;
         }
 
         void move(double x, double y, boolean updateModel) {
-            final double r = getRoad().connectorRadius;
+            final double r = getRoad().getConnectorRadius();
 
             final double offset = getRoad().getOffset(x, y);
             final double newLength = getModel().getOutgoingRoadEnd().isFromEnd() ? offset : getRoad().getLength()
@@ -103,174 +101,16 @@ final class LaneGui {
         public void move(Point2D loc) {
             final double x = loc.getX();
             final double y = loc.getY();
-            final double r = getRoad().connectorRadius;
+            final double r = getRoad().getConnectorRadius();
 
             center.setLocation(x, y);
             circle.setFrame(x - r, y - r, 2 * r, 2 * r);
         }
 
         @Override
+        public
         int getZIndex() {
             return 2;
-        }
-    }
-
-    final class OutgoingConnector extends InteractiveElement {
-        private final Point2D center = new Point2D.Double();
-        private final Ellipse2D circle = new Ellipse2D.Double();
-
-        private Point2D dragLocation;
-        private IncomingConnector dropTarget;
-
-        private OutgoingConnector() {}
-
-        @Override
-        public void paintBackground(Graphics2D g2d, State state) {
-            if (isActive(state)) {
-                final Composite old = g2d.getComposite();
-                g2d.setComposite(((AlphaComposite) old).derive(0.2f));
-
-                g2d.setColor(new Color(255, 127, 31));
-                LaneGui.this.fill(g2d);
-
-                g2d.setComposite(old);
-            }
-
-            if (dragLocation != null) {
-                final State.Connecting s = (State.Connecting) state;
-                final Path2D path = new Path2D.Double();
-                path.moveTo(center.getX(), center.getY());
-
-                final List<RoadGui.ViaConnector> vias = s.getViaConnectors();
-                for (int i = 0; i < vias.size() - 1; i += 2) {
-                    final RoadGui.ViaConnector v = vias.get(i);
-                    final PathIterator it = v.getRoad().getLaneMiddle(v.getRoadEnd().isFromEnd()).getIterator();
-                    path.append(it, true);
-                }
-                if ((vias.size() & 1) != 0) {
-                    final RoadGui.ViaConnector last = vias.get(vias.size() - 1);
-                    path.lineTo(last.getCenter().getX(), last.getCenter().getY());
-                }
-
-                if (dropTarget == null) {
-                    g2d.setColor(GuiContainer.RED);
-                    path.lineTo(dragLocation.getX(), dragLocation.getY());
-                } else {
-                    g2d.setColor(GuiContainer.GREEN);
-                    path.lineTo(dropTarget.getCenter().getX(), dropTarget.getCenter().getY());
-                }
-
-                g2d.setStroke(getContainer().getConnectionStroke());
-                g2d.draw(path);
-            }
-        }
-
-        @Override
-        public void paint(Graphics2D g2d, State state) {
-            if (isVisible(state)) {
-                final Composite old = g2d.getComposite();
-                if (isActive(state)) {
-                    g2d.setComposite(((AlphaComposite) old).derive(1f));
-                }
-
-                g2d.setColor(Color.WHITE);
-                g2d.fill(circle);
-                g2d.setComposite(old);
-            }
-        }
-
-        private boolean isActive(State state) {
-            return state instanceof State.OutgoingActive
-                    && LaneGui.this.equals(((State.OutgoingActive) state).getLane());
-        }
-
-        private boolean isVisible(State state) {
-            if (state instanceof State.Connecting) {
-                return ((State.Connecting) state).getLane().equals(getModel());
-            }
-
-            return !getRoad().getModel().isPrimary() && getModel().getOutgoingJunction().isPrimary();
-        }
-
-        @Override
-        public boolean contains(Point2D p, State state) {
-            return isVisible(state) && (circle.contains(p) || LaneGui.this.contains(p));
-        }
-
-        @Override
-        public Type getType() {
-            return Type.OUTGOING_CONNECTOR;
-        }
-
-        @Override
-        public State activate(State old) {
-            return new State.OutgoingActive(LaneGui.this);
-        }
-
-        @Override
-        boolean beginDrag(double x, double y) {
-            return circle.contains(x, y);
-        }
-
-        @Override
-        State.Connecting drag(double x, double y, InteractiveElement target, State old) {
-            dragLocation = new Point2D.Double(x, y);
-            dropTarget = null;
-
-            if (!(old instanceof State.Connecting)) {
-                return new State.Connecting(getModel());
-            }
-
-            final State.Connecting s = (State.Connecting) old;
-            if (target != null && target.getType() == Type.INCOMING_CONNECTOR) {
-                dropTarget = (IncomingConnector) target;
-
-                return (s.getViaConnectors().size() & 1) == 0 ? s : s.pop();
-            } else if (target != null && target.getType() == Type.VIA_CONNECTOR) {
-                return s.next((RoadGui.ViaConnector) target);
-            }
-
-            return s;
-        }
-
-        @Override
-        State drop(double x, double y, InteractiveElement target, State old) {
-            final State.Connecting s = drag(x, y, target, old);
-            dragLocation = null;
-            if (dropTarget == null) {
-                return activate(old);
-            }
-
-            final List<Road> via = new ArrayList<>();
-            assert (s.getViaConnectors().size() & 1) == 0;
-            for (int i = 0; i < s.getViaConnectors().size(); i += 2) {
-                final RoadGui.ViaConnector a = s.getViaConnectors().get(i);
-                final RoadGui.ViaConnector b = s.getViaConnectors().get(i + 1);
-                assert a.getRoadEnd().getOppositeEnd().equals(b.getRoadEnd());
-                via.add(a.getRoadEnd().getRoad());
-            }
-
-            //getModel().addTurn(via, dropTarget.getRoadEnd());
-            //currently running my add rather then the lane add
-            getModel().addConnection(via, dropTarget.getRoadEnd());
-            dropTarget = null;
-            return new State.Dirty(activate(old));
-        }
-
-        public Point2D getCenter() {
-            return (Point2D) center.clone();
-        }
-
-        void move(double x, double y) {
-            final double r = getRoad().connectorRadius;
-
-            center.setLocation(x, y);
-            circle.setFrame(x - r, y - r, 2 * r, 2 * r);
-        }
-
-        @Override
-        int getZIndex() {
-            return 1;
         }
     }
 
@@ -281,13 +121,13 @@ final class LaneGui {
 
     final Path2D area = new Path2D.Double();
 
-    final OutgoingConnector outgoing = new OutgoingConnector();
+    final OutgoingConnector outgoing = new OutgoingConnector(this);
     final LengthSlider lengthSlider;
 
     private Shape clip;
     private double length;
 
-    LaneGui(RoadGui road, Lane lane) {
+    public LaneGui(RoadGui road, Lane lane) {
         this.road = road;
         this.lane = lane;
         this.lengthSlider = lane.isExtra() ? new LengthSlider() : null;

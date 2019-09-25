@@ -25,9 +25,9 @@ import com.kaart.laneconnectivity.model.Lane;
 import com.kaart.laneconnectivity.model.ModelContainer;
 import com.kaart.laneconnectivity.model.Road;
 
-class GuiContainer {
-    static final Color RED = new Color(234, 66, 108);
-    static final Color GREEN = new Color(66, 234, 108);
+public class GuiContainer {
+    public static final Color RED = new Color(234, 66, 108);
+    public static final Color GREEN = new Color(66, 234, 108);
 
     private static final GuiContainer EMPTY = new GuiContainer(ModelContainer.empty());
 
