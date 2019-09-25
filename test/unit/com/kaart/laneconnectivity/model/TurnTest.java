@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.model;
 
 import java.util.Collections;

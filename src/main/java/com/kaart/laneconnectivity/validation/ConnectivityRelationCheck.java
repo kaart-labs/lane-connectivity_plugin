@@ -53,7 +53,7 @@ public class ConnectivityRelationCheck extends Test {
      * @param relation A relation with a {@code connectivity} tag.
      * @return A Map in the form of {@code Map<Lane From, Map<Lane To, Optional>>}
      */
-    private Map<Integer, Map<Integer, Boolean>> parseConnectivityTag(Relation relation) {
+    private static Map<Integer, Map<Integer, Boolean>> parseConnectivityTag(Relation relation) {
         final String joined = relation.get(CONNECTIVITY_TAG);
 
         if (joined == null) {

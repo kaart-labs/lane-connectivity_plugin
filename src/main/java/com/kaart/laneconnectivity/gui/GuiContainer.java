@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.gui;
 
-import static java.lang.Math.sqrt;
 import static com.kaart.laneconnectivity.gui.GuiUtil.locs;
+import static java.lang.Math.sqrt;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
@@ -19,6 +19,7 @@ import java.util.Map;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+
 import com.kaart.laneconnectivity.model.Junction;
 import com.kaart.laneconnectivity.model.Lane;
 import com.kaart.laneconnectivity.model.ModelContainer;
@@ -98,12 +99,6 @@ class GuiContainer {
         return new JunctionGui(this, j);
     }
 
-    void register(JunctionGui j) {
-        if (junctions.put(j.getModel(), j) != null) {
-            throw new IllegalStateException();
-        }
-    }
-
     public RoadGui getGui(Road r) {
         final RoadGui gui = roads.get(r);
 
@@ -114,6 +109,24 @@ class GuiContainer {
         }
 
         return gui;
+    }
+
+    public LaneGui getGui(Lane lane) {
+        final RoadGui roadGui = roads.get(lane.getRoad());
+
+        for (LaneGui l : roadGui.getLanes()) {
+            if (l.getModel().equals(lane)) {
+                return l;
+            }
+        }
+
+        throw new IllegalArgumentException(tr("No such lane."));
+    }
+
+    void register(JunctionGui j) {
+        if (junctions.put(j.getModel(), j) != null) {
+            throw new IllegalStateException();
+        }
     }
 
     Point2D translateAndScale(Point2D loc) {
@@ -137,18 +150,6 @@ class GuiContainer {
 
     public Stroke getConnectionStroke() {
         return connectionStroke;
-    }
-
-    public LaneGui getGui(Lane lane) {
-        final RoadGui roadGui = roads.get(lane.getRoad());
-
-        for (LaneGui l : roadGui.getLanes()) {
-            if (l.getModel().equals(lane)) {
-                return l;
-            }
-        }
-
-        throw new IllegalArgumentException(tr("No such lane."));
     }
 
     public ModelContainer getModel() {

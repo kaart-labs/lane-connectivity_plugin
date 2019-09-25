@@ -1,11 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.gui;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.tan;
 import static com.kaart.laneconnectivity.gui.GuiUtil.angle;
 import static com.kaart.laneconnectivity.gui.GuiUtil.area;
 import static com.kaart.laneconnectivity.gui.GuiUtil.closest;
@@ -14,6 +9,11 @@ import static com.kaart.laneconnectivity.gui.GuiUtil.line;
 import static com.kaart.laneconnectivity.gui.GuiUtil.loc;
 import static com.kaart.laneconnectivity.gui.GuiUtil.minAngleDiff;
 import static com.kaart.laneconnectivity.gui.GuiUtil.relativePoint;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.tan;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -36,6 +36,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+
 import com.kaart.laneconnectivity.model.Lane;
 import com.kaart.laneconnectivity.model.Road;
 import com.kaart.laneconnectivity.model.TurnlanesUtils;
@@ -576,6 +577,10 @@ class RoadGui {
         return new Point2D.Double(j.x + dx, j.y + dy);
     }
 
+    public double getWidth(Road.End end) {
+        return getWidth(end, true) + getWidth(end, false);
+    }
+
     private double getWidth(Road.End end, boolean left) {
         if (!end.getRoad().equals(road)) {
             throw new IllegalArgumentException();
@@ -881,10 +886,6 @@ class RoadGui {
             final double angle = segments.get(0).angle;
             return angle > PI ? angle - PI : angle + PI;
         }
-    }
-
-    public double getWidth(Road.End end) {
-        return getWidth(end, true) + getWidth(end, false);
     }
 
     public double getLength() {

@@ -14,6 +14,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+
 import com.kaart.laneconnectivity.model.Junction;
 
 final class GuiUtil {
@@ -84,6 +85,10 @@ final class GuiUtil {
         return new Point2D.Double(to.getX() - from.getX(), to.getY() - from.getY());
     }
 
+    public static double angle(Line2D l) {
+        return angle(l.getP1(), l.getP2());
+    }
+
     public static double angle(Point2D from, Point2D to) {
         final double dx = to.getX() - from.getX();
         final double dy = -(to.getY() - from.getY());
@@ -108,10 +113,6 @@ final class GuiUtil {
             l.getX2() + dx,
             l.getY2() + dy
         );
-    }
-
-    public static double angle(Line2D l) {
-        return angle(l.getP1(), l.getP2());
     }
 
     public static double minAngleDiff(double a1, double a2) {

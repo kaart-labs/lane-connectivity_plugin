@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.validation;
 
 import org.junit.Assert;
@@ -24,7 +25,7 @@ public class ConnectivityRelationCheckTest {
         check = new ConnectivityRelationCheck();
     }
 
-    private Relation createDefaultTestRelation() {
+    private static Relation createDefaultTestRelation() {
         Node connection = new Node(new LatLon(0, 0));
         return TestUtils.newRelation("type=connectivity connectivity=1:1",
                 new RelationMember("from", TestUtils.newWay("lanes=4", new Node(new LatLon(-0.1, -0.1)), connection)),
@@ -91,7 +92,7 @@ public class ConnectivityRelationCheckTest {
         }
     }
 
-    private String replaceMember(Relation relation, int index, String replacementRole) {
+    private static String replaceMember(Relation relation, int index, String replacementRole) {
         RelationMember relationMember = relation.getMember(index);
         String currentRole = relationMember.getRole();
         relation.removeMember(index);

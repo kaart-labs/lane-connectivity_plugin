@@ -194,7 +194,7 @@ public class Road {
         /**
          * Get lane of type Kind at a specific index
          *
-         * @param kind  The kind of lane (see {@link Lane#Kind})
+         * @param kind  The kind of lane (see {@link Lane.Kind#values()})
          * @param index The index of the lane
          * @return The lane at the specified index, if it exists
          * @throws IllegalArgumentException if no such lane exists

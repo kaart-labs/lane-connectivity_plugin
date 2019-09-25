@@ -27,10 +27,13 @@ import com.kaart.laneconnectivity.CollectionUtils;
 public final class Turn {
     /**
      * Get the relations that affect the primitive
-     * @param c The {@code ModelContainer} which contains a model? TODO rephrase later
-     * @param role The role that the primitive must have in the relation
+     *
+     * @param c         The {@code ModelContainer} which contains a model? TODO
+     *                  rephrase later
+     * @param role      The role that the primitive must have in the relation
      * @param primitive The OsmPrimitive that may have relations
-     * @return A set of relations that contain the primitive with the specified role and match {@link Constants#TYPE_CONNECTION}
+     * @return A set of relations that contain the primitive with the specified role
+     *         and match {@link Constants#TYPE_CONNECTIVITY}
      */
     static Set<Turn> load(ModelContainer c, String role, OsmPrimitive primitive) {
         return load(c, role, primitive, Constants.TYPE_CONNECTIVITY);
@@ -131,9 +134,11 @@ public final class Turn {
 
     /**
      * Splits a key based off of a split pattern
-     * @param r The relation with the key-value to split
+     *
+     * @param r   The relation with the key-value to split
      * @param key The key that needs to be split
-     * @return A map of a map of Integers (<Lane From, <Lane To, Optional>>). Lanes counts start at 1.
+     * @return A map of a map of Integers
+     *         ({@code <Lane From, <Lane To, Optional>>}). Lanes counts start at 1.
      */
     static Map<Integer, Map<Integer, Boolean>> indices(Relation r, String key) {
         final String joined = r.get(key);
@@ -143,9 +148,9 @@ public final class Turn {
         }
 
         final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
-        String[] lanes = joined.split(Constants.LANE_SEPARATOR);
+        String[] lanes = joined.split(Constants.LANE_SEPARATOR, 0);
         for (int i = 0; i < lanes.length; i++) {
-            String[] lane = lanes[i].split(Constants.CONNECTIVITY_TO_FROM_SEPARATOR);
+            String[] lane = lanes[i].split(Constants.CONNECTIVITY_TO_FROM_SEPARATOR, 0);
             int laneNumber = Integer.parseInt(lane[0].trim());
             Map<Integer, Boolean> connections = new HashMap<>();
             String[] toLanes = Constants.SPLIT_PATTERN.split(lane[1]);
@@ -209,8 +214,8 @@ public final class Turn {
     /**
      * Join a map of maps to conform with the specification for connectivity
      *
-     * @param maps The map conforming to
-     *             {@code Map<laneFrom, Map<laneTo, isOptional>>}
+     * @param lanes The map conforming to
+     *              {@code Map<laneFrom, Map<laneTo, isOptional>>}
      * @return The list of integers joined by the appropriate separators
      */
     public static String join(Map<Integer, Map<Integer, Boolean>> lanes) {

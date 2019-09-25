@@ -1,5 +1,7 @@
+// License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.model;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -7,8 +9,6 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-
-import org.junit.Assert;
 
 public class LaneTest {
     /**

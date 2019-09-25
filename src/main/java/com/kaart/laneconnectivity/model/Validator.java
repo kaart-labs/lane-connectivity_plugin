@@ -18,8 +18,9 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import com.kaart.laneconnectivity.model.Issue.QuickFix;
 import org.openstreetmap.josm.tools.Utils;
+
+import com.kaart.laneconnectivity.model.Issue.QuickFix;
 
 public class Validator {
     private static final class IncomingLanes {
@@ -136,17 +137,18 @@ public class Validator {
         return issues;
     }
 
-    private List<Issue> validateLengths(List<Relation> lenghts, Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
+    private static List<Issue> validateLengths(List<Relation> lengths,
+            Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
         final List<Issue> issues = new ArrayList<>();
 
-        for (Relation r : lenghts) {
+        for (Relation r : lengths) {
             issues.addAll(validateLengths(r, incomingLanes));
         }
 
         return issues;
     }
 
-    private List<Issue> validateLengths(Relation r, Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
+    private static List<Issue> validateLengths(Relation r, Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
         final List<Issue> issues = new ArrayList<>();
 
         try {
@@ -187,7 +189,7 @@ public class Validator {
         }
     }
 
-    private void putIncomingLanes(Route route, List<Double> left, List<Double> right,
+    private static void putIncomingLanes(Route route, List<Double> left, List<Double> right,
             Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
         final Node end = route.getLastSegment().getEnd();
         final Way way = route.getLastSegment().getWay();
@@ -204,7 +206,7 @@ public class Validator {
         }
     }
 
-    private Route validateLengthsWays(Relation r, Node end, List<Issue> issues) {
+    private static Route validateLengthsWays(Relation r, Node end, List<Issue> issues) {
         final List<Way> ways = TurnlanesUtils.getMemberWays(r, Constants.LENGTHS_ROLE_WAYS);
 
         if (ways.isEmpty()) {
@@ -225,7 +227,8 @@ public class Validator {
         return Route.create(ways, end);
     }
 
-    private Route orderWays(final Relation r, List<Way> ways, Node end, List<Issue> issues, String role, String type) {
+    private static Route orderWays(final Relation r, List<Way> ways, Node end, List<Issue> issues, String role,
+            String type) {
         final List<Way> unordered = new ArrayList<>(ways);
         final List<Way> ordered = new ArrayList<>(ways.size());
         final Set<Node> ends = new HashSet<>(); // to find cycles
@@ -278,7 +281,8 @@ public class Validator {
         return Route.create(ordered, end);
     }
 
-    private List<Issue> validateTurns(List<Relation> turns, Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
+    private static List<Issue> validateTurns(List<Relation> turns,
+            Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
         final List<Issue> issues = new ArrayList<>();
 
         for (Relation r : turns) {
@@ -288,7 +292,7 @@ public class Validator {
         return issues;
     }
 
-    private List<Issue> validateTurns(Relation r, Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
+    private static List<Issue> validateTurns(Relation r, Map<IncomingLanes.Key, IncomingLanes> incomingLanes) {
         final List<Issue> issues = new ArrayList<>();
 
         try {
@@ -359,7 +363,7 @@ public class Validator {
         }
     }
 
-    private List<Integer> splitInts(Relation r, String key, List<Issue> issues) {
+    private static List<Integer> splitInts(Relation r, String key, List<Issue> issues) {
         final String ints = r.get(key);
         final List<Integer> result = new ArrayList<>();
 
@@ -377,7 +381,7 @@ public class Validator {
         return result;
     }
 
-    private IncomingLanes get(Map<IncomingLanes.Key, IncomingLanes> incomingLanes, Node via, Way from) {
+    private static IncomingLanes get(Map<IncomingLanes.Key, IncomingLanes> incomingLanes, Node via, Way from) {
         final IncomingLanes.Key key = new IncomingLanes.Key(via, from);
         final IncomingLanes lanes = incomingLanes.get(key);
 

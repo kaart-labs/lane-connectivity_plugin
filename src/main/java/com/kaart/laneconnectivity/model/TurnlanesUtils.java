@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+
 import com.kaart.laneconnectivity.CollectionUtils;
 
 public final class TurnlanesUtils {
@@ -107,15 +108,15 @@ public final class TurnlanesUtils {
      */
     public static Node lineUp(Way a, Way b) {
         final Set<Node> s = new HashSet<>(Arrays.asList(a.firstNode(), a.lastNode(), b.firstNode(), b.lastNode()));
-        if (a.firstNode() == a.lastNode() || b.firstNode().equals(b.lastNode()) || s.size() == 2) {
+        if (a.firstNode().equals(a.lastNode()) || b.firstNode().equals(b.lastNode()) || s.size() == 2) {
             throw new IllegalArgumentException("Cycles are not allowed.");
         } else if (s.size() == 4) {
             throw new IllegalArgumentException("Ways are not connected (at their first and last nodes).");
         }
 
-        if (a.firstNode() == b.firstNode() || a.lastNode() == b.firstNode()) {
+        if (a.firstNode().equals(b.firstNode()) || a.lastNode().equals(b.firstNode())) {
             return b.firstNode();
-        } else if (a.firstNode() == b.lastNode() || a.lastNode() == b.lastNode()) {
+        } else if (a.firstNode().equals(b.lastNode()) || a.lastNode().equals(b.lastNode())) {
             return b.lastNode();
         } else {
             throw new AssertionError();

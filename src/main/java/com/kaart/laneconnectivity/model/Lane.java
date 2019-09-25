@@ -248,9 +248,6 @@ public class Lane {
     public void addConnection(List<Road> via, Road.End to) {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add connectivity"));
 
-        int laneCount1;
-        int laneCount2;
-
         Relation existing = null;
         //this for loop doesn't actually do anything.
         //to clarify this loop is what checks if the Relation already exists, however this version only works for turnlane:turns with a lane tag on the relation
