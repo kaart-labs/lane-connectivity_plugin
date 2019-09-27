@@ -245,7 +245,7 @@ public class Lane {
      * @param via The via node/ways
      * @param to  The ending road
      */
-    public void addConnection(List<Road> via, Road.End to) {
+    public void addConnection(List<Road> via, Lane to) {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add connectivity"));
 
         Relation existing = null;
@@ -271,11 +271,11 @@ public class Lane {
             if (via.isEmpty()) {
                 r.addMember(new RelationMember(Constants.ROLE_VIA, getOutgoingJunction().getNode()));
             } else {
-                for (Way w : TurnlanesUtils.flattenVia(getOutgoingJunction().getNode(), via, to.getJunction().getNode())) {
+                for (Way w : TurnlanesUtils.flattenVia(getOutgoingJunction().getNode(), via, to.getRoad().getToEnd().getJunction().getNode())) {
                     r.addMember(new RelationMember(Constants.ROLE_VIA, w));
                 }
             }
-            r.addMember(new RelationMember(Constants.ROLE_TO, to.getWay()));
+            r.addMember(new RelationMember(Constants.ROLE_TO, to.getRoad().getToEnd().getWay()));
 
             cmd.add(r);
         } else {
@@ -288,7 +288,7 @@ public class Lane {
         Map<Integer, Boolean> temporaryConnectMap = lanes.containsKey(getIndex()) ? lanes.get(getIndex())
                 : new TreeMap<>();
         // TODO use the actual lane the line was drawn to.
-        int numberOfLanes = to.getWay().isOneway() != 0 ? Integer.parseInt(to.getWay().get("lanes")) : to.getLanes().size();
+        int numberOfLanes = to.getRoad().getToEnd().getWay().isOneway() != 0 ? Integer.parseInt(to.getRoad().getToEnd().getWay().get("lanes")) : to.getRoad().getToEnd().getLanes().size();
         temporaryConnectMap.put(Math.min(getIndex(), numberOfLanes), false);
         lanes.putIfAbsent(getIndex(), temporaryConnectMap);
         cmd.backup(r).put(key, Turn.join(lanes));
