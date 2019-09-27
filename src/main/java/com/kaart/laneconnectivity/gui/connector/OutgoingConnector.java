@@ -24,7 +24,7 @@ public final class OutgoingConnector extends InteractiveElement {
     private final Ellipse2D circle = new Ellipse2D.Double();
 
     private Point2D dragLocation;
-    private IncomingConnector dropTarget;
+    private IncomingLaneConnector dropTarget;
 
     private final LaneGui laneGui;
 
@@ -94,12 +94,13 @@ public final class OutgoingConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
+	return true;
+	/*
         if (state instanceof State.Connecting) {
             return ((State.Connecting) state).getLane().equals(laneGui.getModel());
         }
-        return true;
-        //Remove me
-        //return !laneGui.getRoad().getModel().isPrimary() && laneGui.getModel().getOutgoingJunction().isPrimary();
+        return !laneGui.getRoad().getModel().isPrimary() && laneGui.getModel().getOutgoingJunction().isPrimary();
+        */
     }
 
     @Override
@@ -132,8 +133,10 @@ public final class OutgoingConnector extends InteractiveElement {
         }
 
         final State.Connecting s = (State.Connecting) old;
-        if (target != null && target.getType() == Type.INCOMING_CONNECTOR) {
-            dropTarget = (IncomingConnector) target;
+        if (target != null && target.getType() == Type.INCOMING_LANE_CONNECTOR) {
+            dropTarget = (IncomingLaneConnector) target;
+            String outString = Integer.toString(dropTarget.getLaneGui().getModel().getIndex());
+            Logging.info(outString);
 
             return (s.getViaConnectors().size() & 1) == 0 ? s : s.pop();
         } else if (target != null && target.getType() == Type.VIA_CONNECTOR) {
@@ -162,7 +165,7 @@ public final class OutgoingConnector extends InteractiveElement {
 
         // getModel().addTurn(via, dropTarget.getRoadEnd());
         // currently running my add rather then the lane add
-        laneGui.getModel().addConnection(via, dropTarget.getRoadEnd());
+        laneGui.getModel().addConnection(via, dropTarget.getLaneGui().getModel());
         dropTarget = null;
         return new State.Dirty(activate(old));
     }

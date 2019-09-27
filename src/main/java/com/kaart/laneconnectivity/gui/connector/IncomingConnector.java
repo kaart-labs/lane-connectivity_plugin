@@ -89,13 +89,13 @@ public final class IncomingConnector extends InteractiveElement {
 		Logging.info("False at line 88");
             return false;
         }
-        */
 
         if (state instanceof State.Connecting) {
             return ((State.Connecting) state).getJunction().equals(getRoadEnd().getJunction());
         }
+        */
 
-        return true;
+        return false;
     }
 
     @Override

@@ -517,9 +517,12 @@ public class RoadGui {
         for (IncomingConnector c : Arrays.asList(incomingA, incomingB)) {
             int offset = 0;
             for (LaneGui l : c.getLanes()) {
+		moveIncomingLane(l,offset);
                 moveOutgoing(l, offset++);
 
+
                 result.add(l.outgoing);
+                result.add(l.incoming);
                 if (l.getModel().isExtra()) {
                     result.add(l.lengthSlider);
                 }
@@ -674,6 +677,24 @@ public class RoadGui {
         final Point2D loc = relativePoint(i, d, angle(i, rc));
 
         lane.outgoing.move(loc.getX(), loc.getY());
+    }
+
+    private void moveIncomingLane(LaneGui lane, int offset) {
+	final Road.End end = lane.getModel().getOutgoingRoadEnd();
+
+        final Point2D lc = getLeftCorner(end);
+        final Point2D rc = getRightCorner(end);
+        final Line2D cornerLine = new Line2D.Double(lc, rc);
+
+        final double a = getAngle(end);
+        final Line2D roadLine = line(getContainer().getGui(end.getJunction()).getPoint(), a);
+
+        final Point2D i = intersection(roadLine, cornerLine);
+        // TODO fix depending on angle(i, rc)
+        final double d = innerMargin + (2 * offset + 1) * getContainer().getLaneWidth() / 2;
+        final Point2D loc = relativePoint(i, d, angle(i, lc));
+
+        lane.incoming.move(loc.getX(), loc.getY());
     }
 
     public JunctionGui getJunction(Road.End end) {

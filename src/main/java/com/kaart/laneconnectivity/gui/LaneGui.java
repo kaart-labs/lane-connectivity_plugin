@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import com.kaart.laneconnectivity.gui.connector.OutgoingConnector;
+import com.kaart.laneconnectivity.gui.connector.IncomingLaneConnector;
 import com.kaart.laneconnectivity.model.Lane;
 
 public final class LaneGui {
@@ -122,6 +123,7 @@ public final class LaneGui {
     final Path2D area = new Path2D.Double();
 
     final OutgoingConnector outgoing = new OutgoingConnector(this);
+    final IncomingLaneConnector incoming = new IncomingLaneConnector(this);
     final LengthSlider lengthSlider;
 
     private Shape clip;
