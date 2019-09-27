@@ -64,7 +64,8 @@ public final class IncomingLaneConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-	return !laneGui.getRoad().getModel().isPrimary() && laneGui.getModel().getOutgoingJunction().isPrimary();
+	//Make always visible to avoid lane connectivity issues, for now
+	return true;
     }
 
     @Override

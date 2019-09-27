@@ -39,7 +39,6 @@ import com.kaart.laneconnectivity.model.Road;
 import com.kaart.laneconnectivity.model.Turn;
 
 class JunctionGui {
-
     private final class TurnConnection extends InteractiveElement {
         private final Turn turn;
 
@@ -115,11 +114,13 @@ class JunctionGui {
         }
 
         private Path2D getPath() {
-
             final Path2D path = new Path2D.Double();
 
             final LaneGui laneGui = getContainer().getGui(turn.getFrom());
             final RoadGui roadGui = getContainer().getGui(turn.getTo().getRoad());
+            //Starting point
+            path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
+
 
             //Starting point
             path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
@@ -138,14 +139,14 @@ class JunctionGui {
 
                 path.append(it, true);
             }
-
             //End point
             path.lineTo(roadGui.getConnector(turn.getTo()).getCenter().getX(), roadGui.getConnector(turn.getTo()).getCenter()
                 .getY());
 
             return path;
-
         }
+
+
 
 
 

@@ -148,7 +148,6 @@ public class RoadGui {
 
         private boolean isVisible() {
             return end.getJunction().isPrimary();
-
         }
 
         @Override
@@ -520,7 +519,6 @@ public class RoadGui {
 		moveIncomingLane(l,offset);
                 moveOutgoing(l, offset++);
 
-
                 result.add(l.outgoing);
                 result.add(l.incoming);
                 if (l.getModel().isExtra()) {
@@ -680,7 +678,7 @@ public class RoadGui {
     }
 
     private void moveIncomingLane(LaneGui lane, int offset) {
-	final Road.End end = lane.getModel().getOutgoingRoadEnd();
+	final Road.End end = lane.getModel().getOutgoingRoadEnd().getOppositeEnd();
 
         final Point2D lc = getLeftCorner(end);
         final Point2D rc = getRightCorner(end);

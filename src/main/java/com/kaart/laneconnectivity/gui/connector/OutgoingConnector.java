@@ -92,10 +92,8 @@ public final class OutgoingConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-        if (state instanceof State.Connecting) {
-            return ((State.Connecting) state).getLane().equals(laneGui.getModel());
-        }
-        return !laneGui.getRoad().getModel().isPrimary() && laneGui.getModel().getOutgoingJunction().isPrimary();
+	//Make always visible to avoid lane-connectivity issues, for now
+        return true;
     }
 
     @Override
