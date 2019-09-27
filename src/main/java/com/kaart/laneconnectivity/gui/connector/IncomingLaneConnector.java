@@ -29,8 +29,6 @@ public final class IncomingLaneConnector extends InteractiveElement {
     private final LaneGui laneGui;
 
     public IncomingLaneConnector(LaneGui laneGui) {
-	//Remove me
-	//Logging.info("Outgoing made");
         this.laneGui = laneGui;
     }
 
@@ -94,14 +92,7 @@ public final class IncomingLaneConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-	/*
-        if (state instanceof State.Connecting) {
-            return ((State.Connecting) state).getLane().equals(laneGui.getModel());
-        }
-        */
-
-	return true;
-        //return !laneGui.getRoad().getModel().isPrimary() && laneGui.getModel().getOutgoingJunction().isPrimary();
+	return !laneGui.getRoad().getModel().isPrimary() && laneGui.getModel().getOutgoingJunction().isPrimary();
     }
 
     @Override
