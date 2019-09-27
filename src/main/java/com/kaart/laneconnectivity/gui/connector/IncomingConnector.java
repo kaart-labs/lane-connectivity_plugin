@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openstreetmap.josm.tools.Logging;
+
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
 import com.kaart.laneconnectivity.gui.RoadGui;
@@ -26,6 +28,7 @@ public final class IncomingConnector extends InteractiveElement {
     private final Ellipse2D circle = new Ellipse2D.Double();
 
     public IncomingConnector(RoadGui gui, Road.End end) {
+	//Logging.info("InConnector made");
         this.end = end;
         this.roadGui = gui;
 
@@ -54,7 +57,9 @@ public final class IncomingConnector extends InteractiveElement {
 
     @Override
     public void paint(Graphics2D g2d, State state) {
+	//Logging.info("Painting connector");
         if (isVisible(state)) {
+		//Logging.info("Connector visible");
             final Composite old = g2d.getComposite();
             if (isActive(state)) {
                 g2d.setComposite(((AlphaComposite) old).derive(1f));
@@ -78,10 +83,13 @@ public final class IncomingConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
+	/*
         if (roadGui.getModel().isPrimary() || !getRoadEnd().getJunction().isPrimary()
                 || getRoadEnd().getOppositeEnd().getLanes().isEmpty()) {
+		Logging.info("False at line 88");
             return false;
         }
+        */
 
         if (state instanceof State.Connecting) {
             return ((State.Connecting) state).getJunction().equals(getRoadEnd().getJunction());

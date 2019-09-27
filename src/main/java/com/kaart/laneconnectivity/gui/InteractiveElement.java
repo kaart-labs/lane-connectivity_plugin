@@ -8,6 +8,7 @@ public abstract class InteractiveElement {
     public interface Type {
         Type INCOMING_CONNECTOR = new Type() {};
         Type OUTGOING_CONNECTOR = new Type() {};
+        Type INCOMING_LANE_CONNECTOR = new Type() {};
         Type TURN_CONNECTION = new Type() {};
         Type LANE_ADDER = new Type() {};
         Type EXTENDER = new Type() {};

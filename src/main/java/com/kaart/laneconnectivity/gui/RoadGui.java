@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Logging;
 
 import com.kaart.laneconnectivity.gui.connector.IncomingConnector;
 import com.kaart.laneconnectivity.gui.connector.ViaConnector;
@@ -147,6 +148,7 @@ public class RoadGui {
 
         private boolean isVisible() {
             return end.getJunction().isPrimary();
+
         }
 
         @Override
