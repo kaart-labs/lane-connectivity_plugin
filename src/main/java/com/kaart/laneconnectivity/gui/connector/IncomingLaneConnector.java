@@ -110,32 +110,6 @@ public final class IncomingLaneConnector extends InteractiveElement {
         return new State.OutgoingActive(laneGui);
     }
 
-    @Override
-    public boolean beginDrag(double x, double y) {
-        return circle.contains(x, y);
-    }
-
-    @Override
-    public State.Connecting drag(double x, double y, InteractiveElement target, State old) {
-        dragLocation = new Point2D.Double(x, y);
-        dropTarget = null;
-
-        if (!(old instanceof State.Connecting)) {
-            return new State.Connecting(laneGui.getModel());
-        }
-
-        final State.Connecting s = (State.Connecting) old;
-        if (target != null && target.getType() == Type.INCOMING_CONNECTOR) {
-            dropTarget = (IncomingConnector) target;
-
-            return (s.getViaConnectors().size() & 1) == 0 ? s : s.pop();
-        } else if (target != null && target.getType() == Type.VIA_CONNECTOR) {
-            return s.next((ViaConnector) target);
-        }
-
-        return s;
-    }
-
     public Point2D getCenter() {
         return (Point2D) center.clone();
     }
