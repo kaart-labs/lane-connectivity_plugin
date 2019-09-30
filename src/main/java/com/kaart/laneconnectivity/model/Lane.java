@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Logging;
 
 public class Lane {
     public enum Kind {
@@ -231,12 +232,12 @@ public class Lane {
         }
 
         final String key = isExtra() ? Constants.TURN_KEY_EXTRA_LANES : Constants.TURN_KEY_LANES;
-        // TODO don't use keySet, use all of the information.
-        final List<Integer> lanes = new ArrayList<>(Turn.indices(r, key).keySet());
-        lanes.add(getIndex());
-        cmd.backup(r).put(key, Turn.join(lanes));
+        // Commented out. This whole function should probably be deleted in the future
+        //final List<Integer> lanes = new ArrayList<>(Turn.indices(r, key).keySet());
+        //lanes.add(getIndex());
+        //cmd.backup(r).put(key, Turn.join(lanes));
 
-        UndoRedoHandler.getInstance().add(cmd);
+        //UndoRedoHandler.getInstance().add(cmd);
     }
 //here is my stuff, currently does not work for everything i need. has bug where keeps added relations even after it exists,
     /**
@@ -249,9 +250,8 @@ public class Lane {
         final GenericCommand cmd = new GenericCommand(getOutgoingJunction().getNode().getDataSet(), tr("Add connectivity"));
 
         Relation existing = null;
-        //this for loop doesn't actually do anything.
-        //to clarify this loop is what checks if the Relation already exists, however this version only works for turnlane:turns with a lane tag on the relation
-        for (Turn t : to.getTurns()) {
+        //to.getTurns() returns different set of turns compared to to.getRoad(0.etc . . .
+        for (Turn t : to.getRoad().getFromEnd().getTurns()) {
             if (t.getFrom().getOutgoingRoadEnd().equals(getOutgoingRoadEnd()) && t.getVia().equals(via)) {
                 if (t.getFrom().equals(this)) {
                     // was already added
@@ -282,7 +282,6 @@ public class Lane {
             r = existing;
         }
 
-        // generic connectivity
         final String key = Constants.TYPE_CONNECTIVITY;
         final Map<Integer, Map<Integer, Boolean>> lanes = Turn.indices(r, key);
         Map<Integer, Boolean> temporaryConnectMap = lanes.containsKey(getIndex()) ? lanes.get(getIndex())
