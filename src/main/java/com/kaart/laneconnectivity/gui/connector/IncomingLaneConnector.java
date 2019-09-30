@@ -43,34 +43,6 @@ public final class IncomingLaneConnector extends InteractiveElement {
 
             g2d.setComposite(old);
         }
-
-        if (dragLocation != null) {
-            final State.Connecting s = (State.Connecting) state;
-            final Path2D path = new Path2D.Double();
-            path.moveTo(center.getX(), center.getY());
-
-            final List<ViaConnector> vias = s.getViaConnectors();
-            for (int i = 0; i < vias.size() - 1; i += 2) {
-                final ViaConnector v = vias.get(i);
-                final PathIterator it = v.getRoad().getLaneMiddle(v.getRoadEnd().isFromEnd()).getIterator();
-                path.append(it, true);
-            }
-            if ((vias.size() & 1) != 0) {
-                final ViaConnector last = vias.get(vias.size() - 1);
-                path.lineTo(last.getCenter().getX(), last.getCenter().getY());
-            }
-
-            if (dropTarget == null) {
-                g2d.setColor(GuiContainer.RED);
-                path.lineTo(dragLocation.getX(), dragLocation.getY());
-            } else {
-                g2d.setColor(GuiContainer.GREEN);
-                path.lineTo(dropTarget.getCenter().getX(), dropTarget.getCenter().getY());
-            }
-
-            g2d.setStroke(laneGui.getContainer().getConnectionStroke());
-            g2d.draw(path);
-        }
     }
 
     @Override

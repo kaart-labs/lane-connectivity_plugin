@@ -130,8 +130,6 @@ public final class OutgoingConnector extends InteractiveElement {
         final State.Connecting s = (State.Connecting) old;
         if (target != null && target.getType() == Type.INCOMING_LANE_CONNECTOR) {
             dropTarget = (IncomingLaneConnector) target;
-            String outString = Integer.toString(dropTarget.getLaneGui().getModel().getIndex());
-            Logging.info(outString);
 
             return (s.getViaConnectors().size() & 1) == 0 ? s : s.pop();
         } else if (target != null && target.getType() == Type.VIA_CONNECTOR) {
