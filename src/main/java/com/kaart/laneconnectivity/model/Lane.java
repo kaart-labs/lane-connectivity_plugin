@@ -16,8 +16,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.Logging;
-
 public class Lane {
     public enum Kind {
         EXTRA_LEFT,
@@ -253,11 +251,6 @@ public class Lane {
         //to.getTurns() returns different set of turns compared to to.getRoad(0.etc . . .
         for (Turn t : to.getRoad().getFromEnd().getTurns()) {
             if (t.getFrom().getOutgoingRoadEnd().equals(getOutgoingRoadEnd()) && t.getVia().equals(via)) {
-                if (t.getFrom().equals(this)) {
-                    // was already added
-                    return;
-                }
-
                 existing = t.getRelation();
             }
         }
@@ -288,7 +281,7 @@ public class Lane {
                 : new TreeMap<>();
         // TODO use the actual lane the line was drawn to.
         int numberOfLanes = to.getRoad().getToEnd().getWay().isOneway() != 0 ? Integer.parseInt(to.getRoad().getToEnd().getWay().get("lanes")) : to.getRoad().getToEnd().getLanes().size();
-        temporaryConnectMap.put(Math.min(getIndex(), numberOfLanes), false);
+        temporaryConnectMap.put(to.getIndex(), false);
         lanes.putIfAbsent(getIndex(), temporaryConnectMap);
         cmd.backup(r).put(key, Turn.join(lanes));
 

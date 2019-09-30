@@ -4,9 +4,7 @@ package com.kaart.laneconnectivity.model;
 import java.util.regex.Pattern;
 
 public final class Constants {
-    private Constants() {
-        // Do nothing
-    }
+    private Constants() {}
 
     /** The standard OSM tag separator */
     static final String SEPARATOR = ";";

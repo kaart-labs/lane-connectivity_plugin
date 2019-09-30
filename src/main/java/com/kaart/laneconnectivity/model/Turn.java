@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Logging;
 
 import com.kaart.laneconnectivity.CollectionUtils;
 
@@ -146,7 +147,6 @@ public final class Turn {
         if (joined == null) {
             return new TreeMap<>();
         }
-
         final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
         String[] lanes = joined.split(Constants.LANE_SEPARATOR, 0);
         for (int i = 0; i < lanes.length; i++) {
@@ -160,7 +160,7 @@ public final class Turn {
                     toLane = toLane.replace("(", "").replace(")", "").trim();
                     connections.put(Integer.parseInt(toLane), true);
                 } else {
-                    connections.put(Integer.parseInt(toLane), false);
+			connections.put(Integer.parseInt(toLane), false);
                 }
             }
             result.put(laneNumber, connections);
