@@ -5,26 +5,16 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.openstreetmap.josm.tools.Logging;
 
-import com.kaart.laneconnectivity.gui.GuiContainer;
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
 import com.kaart.laneconnectivity.gui.State;
-import com.kaart.laneconnectivity.model.Road;
 
 public final class IncomingLaneConnector extends InteractiveElement {
     private final Point2D center = new Point2D.Double();
     private final Ellipse2D circle = new Ellipse2D.Double();
-
-    private Point2D dragLocation;
-    private IncomingConnector dropTarget;
 
     private final LaneGui laneGui;
 
@@ -64,6 +54,9 @@ public final class IncomingLaneConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
+	if (laneGui.getRoad().getModel().isPrimary()) {
+            return false;
+        }
 	//Make always visible to avoid lane connectivity issues, for now
 	return true;
     }

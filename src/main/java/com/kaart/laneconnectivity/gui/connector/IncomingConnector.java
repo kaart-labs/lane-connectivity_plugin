@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.tools.Logging;
-
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
 import com.kaart.laneconnectivity.gui.RoadGui;

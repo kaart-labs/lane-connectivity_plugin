@@ -11,7 +11,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openstreetmap.josm.tools.Logging;
 
 import com.kaart.laneconnectivity.gui.GuiContainer;
 import com.kaart.laneconnectivity.gui.InteractiveElement;
