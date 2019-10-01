@@ -21,7 +21,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.Logging;
 
 import com.kaart.laneconnectivity.CollectionUtils;
 
@@ -168,6 +167,10 @@ public final class Turn {
         return result;
     }
 
+    public Map<Integer, Map<Integer, Boolean>> connectivityIndicesForGui(){
+	return indices(relation,Constants.TYPE_CONNECTIVITY);
+    }
+
     private static Set<Turn> loadWithViaNode(ModelContainer c, Relation r) {
         final Way from = TurnlanesUtils.getMemberWay(r, Constants.ROLE_FROM);
         final Node via = TurnlanesUtils.getMemberNode(r, Constants.ROLE_VIA);
@@ -267,7 +270,7 @@ public final class Turn {
         return to;
     }
 
-    Relation getRelation() {
+    public Relation getRelation() {
         return relation;
     }
 

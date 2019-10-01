@@ -148,6 +148,10 @@ public final class LaneGui {
         return road;
     }
 
+    public Point2D getIncomingConnectorCenter() {
+	return incoming.getCenter();
+    }
+
     public GuiContainer getContainer() {
         return getRoad().getContainer();
     }
