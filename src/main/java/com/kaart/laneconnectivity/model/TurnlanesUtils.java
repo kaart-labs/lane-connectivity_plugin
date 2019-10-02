@@ -222,10 +222,12 @@ public final class TurnlanesUtils {
                 n = getOppositeEnd(s.getWay(), n);
             }
         }
+        /*
         if (!end.equals(n)) {
 		result.clear();
             throw new IllegalArgumentException("The given via ways don't end at the given node.");
         }
+        */
 
         return result;
     }
