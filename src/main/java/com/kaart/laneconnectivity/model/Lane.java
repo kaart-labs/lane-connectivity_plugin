@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Logging;
 public class Lane {
     public enum Kind {
         EXTRA_LEFT,
@@ -264,8 +265,12 @@ public class Lane {
             if (via.isEmpty()) {
                 r.addMember(new RelationMember(Constants.ROLE_VIA, getOutgoingJunction().getNode()));
             } else {
-                for (Way w : TurnlanesUtils.flattenVia(getOutgoingJunction().getNode(), via, to.getRoad().getToEnd().getJunction().getNode())) {
+		Iterable<Way> ways = TurnlanesUtils.flattenVia(getOutgoingJunction().getNode(), via, to.getRoad().getToEnd().getJunction().getNode());
+                for (Way w : ways) {
                     r.addMember(new RelationMember(Constants.ROLE_VIA, w));
+                }
+                if (ways == null) {
+			Logging.info("BLERG");
                 }
             }
             r.addMember(new RelationMember(Constants.ROLE_TO, to.getRoad().getToEnd().getWay()));

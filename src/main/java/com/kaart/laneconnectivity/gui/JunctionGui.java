@@ -66,49 +66,48 @@ class JunctionGui {
 
 
         private List<Path2D> getConnections() {
-		List<Path2D> result = new ArrayList();
-		Map<Integer, Map<Integer, Boolean>> connectivity = turn.connectivityIndicesForGui();
+			List<Path2D> result = new ArrayList();
+			Map<Integer, Map<Integer, Boolean>> connectivity = turn.connectivityIndicesForGui();
 			final LaneGui laneGui = getContainer().getGui(turn.getFrom());
 	        final RoadGui roadGui = getContainer().getGui(turn.getTo().getRoad());
-		int turnFromLaneIndex = laneGui.getModel().getIndex();
-		Map<Integer, Boolean> toConnections = connectivity.get(turnFromLaneIndex);
-		for (Map.Entry<Integer, Boolean> toLanes: toConnections.entrySet()/*connections.getValue().entrySet()*/) {
+			int turnFromLaneIndex = laneGui.getModel().getIndex();
+			Map<Integer, Boolean> toConnections = connectivity.get(turnFromLaneIndex);
+			for (Map.Entry<Integer, Boolean> toLanes: toConnections.entrySet()/*connections.getValue().entrySet()*/) {
 			//Get to and from indexes
 			int toLane = toLanes.getKey();
 			final Path2D path = new Path2D.Double();
 	        final List<LaneGui> toLaneGuis = roadGui.getLanes();
 	        LaneGui toLaneGui = null;
 	        for (LaneGui lane : toLaneGuis) {
-			Logging.info("Checking lane " + Integer.toString(lane.getModel().getIndex()));
-			if (lane.getModel().getIndex() == toLane) {
-				toLaneGui = lane;
-				break;
-			}
+				Logging.info("Checking lane " + Integer.toString(lane.getModel().getIndex()));
+				if (lane.getModel().getIndex() == toLane) {
+					toLaneGui = lane;
+					break;
+				}
 	        }
 	        //Starting point
-	            path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
-	            //Via points in the middle
-	            Junction j = laneGui.getModel().getOutgoingJunction();
-	            for (Road v : turn.getVia()) {
-	                final PathIterator it;
-	                if (v.getFromEnd().getJunction().equals(j)) {
-	                    it = getContainer().getGui(v).getLaneMiddle(true).getIterator();
-	                    j = v.getToEnd().getJunction();
-	                } else {
-	                    it = getContainer().getGui(v).getLaneMiddle(false).getIterator();
-	                    j = v.getFromEnd().getJunction();
-	                }
+            path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
+            //Via points in the middle
+            Junction j = laneGui.getModel().getOutgoingJunction();
+            for (Road v : turn.getVia()) {
+                final PathIterator it;
+                if (v.getFromEnd().getJunction().equals(j)) {
+                    it = getContainer().getGui(v).getLaneMiddle(true).getIterator();
+                    j = v.getToEnd().getJunction();
+                } else {
+                    it = getContainer().getGui(v).getLaneMiddle(false).getIterator();
+                    j = v.getFromEnd().getJunction();
+                }
 
-	                path.append(it, true);
-	            }
-	            //Ending point
-	            try {
-			path.lineTo(toLaneGui.getIncomingConnectorCenter().getX(),toLaneGui.getIncomingConnectorCenter().getY());
-	            } catch(Exception e){
-			Logging.error("No LaneGui 'to point' found");
-			Logging.error(e);
-	            }
-	            result.add(path);
+                path.append(it, true);
+            }
+            //Ending point
+            try {
+		path.lineTo(toLaneGui.getIncomingConnectorCenter().getX(),toLaneGui.getIncomingConnectorCenter().getY());
+            } catch(Exception e){
+				throw new IllegalArgumentException("No 'to' point found for LaneGui");
+            }
+            result.add(path);
 		 }
 		return result;
         }
@@ -146,10 +145,6 @@ class JunctionGui {
             return path;
         }
 
-
-
-
-
         private boolean isVisible(State state) {
             if (state instanceof State.AllTurns) {
                 return true;
@@ -158,7 +153,6 @@ class JunctionGui {
             } else if (state instanceof State.IncomingActive) {
                 return turn.getTo().equals(((State.IncomingActive) state).getRoadEnd());
             }
-
             return false;
         }
 

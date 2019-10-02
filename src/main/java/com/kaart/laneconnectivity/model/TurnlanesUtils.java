@@ -223,6 +223,7 @@ public final class TurnlanesUtils {
             }
         }
         if (!end.equals(n)) {
+		result.clear();
             throw new IllegalArgumentException("The given via ways don't end at the given node.");
         }
 
