@@ -321,10 +321,11 @@ class JunctionPane extends JComponent {
                     center();
                 }
             } catch (UnexpectedDataException e) {
-            Logging.error(e);
+		Logging.info("Exception");
+		Logging.error(e);
                 displayError(e);
             } catch (RuntimeException e) {
-            Logging.error(e);
+		Logging.error(e);
                 displayError(e);
             }
         } else if (state instanceof State.Dirty) {

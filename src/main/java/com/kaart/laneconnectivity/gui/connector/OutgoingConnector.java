@@ -11,7 +11,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.kaart.laneconnectivity.gui.GuiContainer;
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
@@ -153,8 +152,6 @@ public final class OutgoingConnector extends InteractiveElement {
             via.add(a.getRoadEnd().getRoad());
         }
 
-        // getModel().addTurn(via, dropTarget.getRoadEnd());
-        // currently running my add rather then the lane add
         laneGui.getModel().addConnection(via, dropTarget.getLaneGui().getModel());
         dropTarget = null;
         return new State.Dirty(activate(old));
