@@ -51,20 +51,19 @@ public class RoadGui {
         Extender(Road.End end, Way way, double angle) {
             this.end = end;
             this.way = way;
-            this.line = new Line2D.Double(a.getPoint(), relativePoint(a.getPoint(), getContainer().getLaneWidth() * 4, angle));
+            this.line = new Line2D.Double(a.getPoint(),
+                    relativePoint(a.getPoint(), getContainer().getLaneWidth() * 4, angle));
         }
 
         @Override
-        public
-        void paint(Graphics2D g2d, State state) {
+        public void paint(Graphics2D g2d, State state) {
             g2d.setStroke(getContainer().getConnectionStroke());
             g2d.setColor(Color.CYAN);
             g2d.draw(line);
         }
 
         @Override
-        public
-        boolean contains(Point2D p, State state) {
+        public boolean contains(Point2D p, State state) {
             final BasicStroke stroke = (BasicStroke) getContainer().getConnectionStroke();
             final double strokeWidth = stroke.getLineWidth();
 
@@ -73,21 +72,18 @@ public class RoadGui {
         }
 
         @Override
-        public
-        State click(State old) {
+        public State click(State old) {
             end.extend(way);
             return new State.Invalid(old);
         }
 
         @Override
-        public
-        Type getType() {
+        public Type getType() {
             return Type.EXTENDER;
         }
 
         @Override
-        public
-        int getZIndex() {
+        public int getZIndex() {
             return 0;
         }
     }
@@ -126,8 +122,7 @@ public class RoadGui {
         }
 
         @Override
-        public
-        void paint(Graphics2D g2d, State state) {
+        public void paint(Graphics2D g2d, State state) {
             if (!isVisible()) {
                 return;
             }
@@ -150,20 +145,17 @@ public class RoadGui {
         }
 
         @Override
-        public
-        boolean contains(Point2D p, State state) {
+        public boolean contains(Point2D p, State state) {
             return isVisible() && background.contains(p);
         }
 
         @Override
-        public
-        Type getType() {
+        public Type getType() {
             return Type.LANE_ADDER;
         }
 
         @Override
-        public
-        int getZIndex() {
+        public int getZIndex() {
             return 2;
         }
 
@@ -242,7 +234,8 @@ public class RoadGui {
                 }
 
                 final double a = minAngleDiff(angle, n.angle);
-                final double d = 3 * outerMargin + getWidth(getModel().getToEnd(), (forward && a < 0) || (!forward && a > 0));
+                final double d = 3 * outerMargin
+                        + getWidth(getModel().getToEnd(), (forward && a < 0) || (!forward && a > 0));
                 final double l = d * tan(abs(a));
 
                 if (length - offset < l / 2 || n.length < l / 2) {
@@ -266,8 +259,8 @@ public class RoadGui {
     }
 
     /**
-     * This should become a setting, but rounding is (as of yet) still slightly buggy and a low
-     * priority.
+     * This should become a setting, but rounding is (as of yet) still slightly
+     * buggy and a low priority.
      */
     private static final boolean ROUND_CORNERS = false;
 
@@ -323,15 +316,15 @@ public class RoadGui {
         }
         this.length = l;
 
-        this.innerMargin = !incomingA.getLanes().isEmpty() && !incomingB.getLanes().isEmpty() ? 1 * container
-            .getLaneWidth() / 15 : 0;
+        this.innerMargin = !incomingA.getLanes().isEmpty() && !incomingB.getLanes().isEmpty()
+                ? 1 * container.getLaneWidth() / 15
+                : 0;
         this.outerMargin = container.getLaneWidth() / 6;
         this.connectorRadius = 3 * container.getLaneWidth() / 8;
         this.lineWidth = (float) (container.getLaneWidth() / 30);
         this.regularStroke = new BasicStroke(2 * lineWidth);
-        this.dashedStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10f, new float[] {
-            (float) (container.getLaneWidth() / 2), (float) (container.getLaneWidth() / 3)
-        }, 0);
+        this.dashedStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10f,
+                new float[] { (float) (container.getLaneWidth() / 2), (float) (container.getLaneWidth() / 3) }, 0);
     }
 
     public JunctionGui getA() {
@@ -450,7 +443,8 @@ public class RoadGui {
         if (end.isExtendable()) {
             final Node n = end.getJunction().getNode();
             for (Way w : org.openstreetmap.josm.tools.Utils.filteredCollection(n.getReferrers(), Way.class)) {
-                if (w.getNodesCount() > 1 && !end.getWay().equals(w) && w.isFirstLastNode(n) && TurnlanesUtils.isRoad(w)) {
+                if (w.getNodesCount() > 1 && !end.getWay().equals(w) && w.isFirstLastNode(n)
+                        && TurnlanesUtils.isRoad(w)) {
                     final Node nextNode = w.firstNode().equals(n) ? w.getNode(1) : w.getNode(w.getNodesCount() - 2);
                     final Point2D nextNodeLoc = getContainer().translateAndScale(loc(nextNode));
                     result.add(new Extender(end, w, angle(a.getPoint(), nextNodeLoc)));
@@ -515,7 +509,7 @@ public class RoadGui {
         for (IncomingConnector c : Arrays.asList(incomingA, incomingB)) {
             int offset = 0;
             for (LaneGui l : c.getLanes()) {
-		moveIncomingLane(l,offset);
+                moveIncomingLane(l, offset);
                 moveOutgoing(l, offset++);
 
                 result.add(l.outgoing);
@@ -677,7 +671,7 @@ public class RoadGui {
     }
 
     private void moveIncomingLane(LaneGui lane, int offset) {
-	final Road.End end = lane.getModel().getOutgoingRoadEnd().getOppositeEnd();
+        final Road.End end = lane.getModel().getOutgoingRoadEnd().getOppositeEnd();
 
         final Point2D lc = getLeftCorner(end);
         final Point2D rc = getRightCorner(end);

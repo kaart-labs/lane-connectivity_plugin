@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.tools.Logging;
-
 import com.kaart.laneconnectivity.gui.connector.ViaConnector;
 import com.kaart.laneconnectivity.model.Junction;
 import com.kaart.laneconnectivity.model.Lane;
@@ -18,7 +16,7 @@ public abstract class State {
         private final State wrapped;
 
         AllTurns(State wrapped) {
-		//Logging.info("State wrapped");
+            // Logging.info("State wrapped");
             this.wrapped = wrapped;
         }
 
@@ -38,11 +36,11 @@ public abstract class State {
 
         public Connecting(Lane lane) {
             this(lane, Collections.<ViaConnector>emptyList());
-		//Logging.info("State Connecting");
+            // Logging.info("State Connecting");
         }
 
         public Connecting(Lane lane, List<ViaConnector> vias) {
-		//Logging.info("State Connecting");
+            // Logging.info("State Connecting");
             this.lane = lane;
             this.vias = vias;
         }
@@ -105,7 +103,7 @@ public abstract class State {
         private final State wrapped;
 
         Invalid(State wrapped) {
-		//Logging.info("State Invalid");
+            // Logging.info("State Invalid");
             this.wrapped = wrapped;
         }
 
@@ -118,7 +116,7 @@ public abstract class State {
         private final State wrapped;
 
         public Dirty(State wrapped) {
-		//Logging.info("State Dirty");
+            // Logging.info("State Dirty");
             this.wrapped = wrapped;
         }
 
@@ -134,7 +132,7 @@ public abstract class State {
 
     static class Default extends State {
         Default() {
-		//Logging.info("State Default");
+            // Logging.info("State Default");
         }
     }
 
@@ -143,7 +141,7 @@ public abstract class State {
 
         public IncomingActive(Road.End roadEnd) {
             this.roadEnd = roadEnd;
-		//Logging.info("State IncomingActive");
+            // Logging.info("State IncomingActive");
         }
 
         public Road.End getRoadEnd() {
@@ -173,7 +171,7 @@ public abstract class State {
 
         public OutgoingActive(LaneGui lane) {
             this.lane = lane;
-		//Logging.info("State OutgoingActive");
+            // Logging.info("State OutgoingActive");
         }
 
         public LaneGui getLane() {
@@ -217,12 +215,12 @@ public abstract class State {
     }
 
     public State delete() {
-	//Logging.info("State delete");
+        // Logging.info("State delete");
         return this;
     }
 
     public State carryOver(GuiContainer newContainer) {
-	//Logging.info("State carryOver");
+        // Logging.info("State carryOver");
         return this;
     }
 }

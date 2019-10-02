@@ -137,7 +137,6 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
 
     private final JPanel body = new JPanel();
 
-
     private final JunctionPane junctionPane = new JunctionPane(GuiContainer.empty());
 
     private final JToggleButton editButton = new JToggleButton(editAction);
@@ -178,19 +177,20 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
 
     /**
      * Add label and checkbox for traffic direction and change flag
+     * 
      * @param buttonPanel button panel
      */
     private void addTrafficDirectionCheckBox(JPanel buttonPanel) {
         GridBagConstraints constraints = new GridBagConstraints();
         JLabel aoiLabel = new JLabel(tr("Left-hand traffic direction:"));
         constraints.gridx = 0;
-        constraints.gridwidth = 1; //next-to-last
-        constraints.fill = GridBagConstraints.NONE;      //reset to default
+        constraints.gridwidth = 1; // next-to-last
+        constraints.fill = GridBagConstraints.NONE; // reset to default
         constraints.weightx = 0.0;
         buttonPanel.add(aoiLabel, constraints);
 
         constraints.gridx = 1;
-        constraints.gridwidth = GridBagConstraints.REMAINDER;     //end row
+        constraints.gridwidth = GridBagConstraints.REMAINDER; // end row
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         JCheckBox leftDirectionCheckbox = new JCheckBox();
@@ -222,8 +222,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
             final Collection<Node> nodes = org.openstreetmap.josm.tools.Utils.filteredCollection(selected, Node.class);
             final Collection<Way> ways = org.openstreetmap.josm.tools.Utils.filteredCollection(selected, Way.class);
 
-            modelContainer = nodes.isEmpty() ? ModelContainer.empty() : ModelContainer
-                    .createEmpty(nodes, ways);
+            modelContainer = nodes.isEmpty() ? ModelContainer.empty() : ModelContainer.createEmpty(nodes, ways);
             modelContainer.setLeftDirection(leftDirection);
 
             junctionPane.setJunction(new GuiContainer(modelContainer));

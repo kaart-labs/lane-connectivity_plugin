@@ -20,8 +20,8 @@ import java.awt.geom.Point2D;
 import java.util.NoSuchElementException;
 
 /**
- * A path that allows constructing offset curves/parallel curves with a somewhat crude straight
- * skeleton implementation.
+ * A path that allows constructing offset curves/parallel curves with a somewhat
+ * crude straight skeleton implementation.
  *
  * @author Ben Schulz
  */

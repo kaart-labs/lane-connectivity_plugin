@@ -1,11 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package com.kaart.laneconnectivity.gui;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.hypot;
-import static java.lang.Math.max;
-import static java.lang.Math.tan;
 import static com.kaart.laneconnectivity.gui.GuiUtil.angle;
 import static com.kaart.laneconnectivity.gui.GuiUtil.closest;
 import static com.kaart.laneconnectivity.gui.GuiUtil.cpf;
@@ -13,6 +8,11 @@ import static com.kaart.laneconnectivity.gui.GuiUtil.intersection;
 import static com.kaart.laneconnectivity.gui.GuiUtil.loc;
 import static com.kaart.laneconnectivity.gui.GuiUtil.normalize;
 import static com.kaart.laneconnectivity.gui.GuiUtil.relativePoint;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.hypot;
+import static java.lang.Math.max;
+import static java.lang.Math.tan;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -51,65 +51,65 @@ class JunctionGui {
         }
 
         @Override
-        public
-        void paint(Graphics2D g2d, State state) {
+        public void paint(Graphics2D g2d, State state) {
             if (isVisible(state)) {
                 g2d.setStroke(getContainer().getConnectionStroke());
                 g2d.setColor(isRemoveDragOffset() ? GuiContainer.RED : GuiContainer.GREEN);
                 g2d.translate(dragOffsetX, dragOffsetY);
                 for (Path2D path : getConnections()) {
-                  g2d.draw(path);
+                    g2d.draw(path);
                 }
                 g2d.translate(-dragOffsetX, -dragOffsetY);
             }
         }
 
-
         private List<Path2D> getConnections() {
-			List<Path2D> result = new ArrayList();
-			Map<Integer, Map<Integer, Boolean>> connectivity = turn.connectivityIndicesForGui();
-			final LaneGui laneGui = getContainer().getGui(turn.getFrom());
-	        final RoadGui roadGui = getContainer().getGui(turn.getTo().getRoad());
-			int turnFromLaneIndex = laneGui.getModel().getIndex();
-			Map<Integer, Boolean> toConnections = connectivity.get(turnFromLaneIndex);
-			for (Map.Entry<Integer, Boolean> toLanes: toConnections.entrySet()/*connections.getValue().entrySet()*/) {
-			//Get to and from indexes
-			int toLane = toLanes.getKey();
-			final Path2D path = new Path2D.Double();
-	        final List<LaneGui> toLaneGuis = roadGui.getLanes();
-	        LaneGui toLaneGui = null;
-	        for (LaneGui lane : toLaneGuis) {
-				Logging.info("Checking lane " + Integer.toString(lane.getModel().getIndex()));
-				if (lane.getModel().getIndex() == toLane) {
-					toLaneGui = lane;
-					break;
-				}
-	        }
-	        //Starting point
-            path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
-            //Via points in the middle
-            Junction j = laneGui.getModel().getOutgoingJunction();
-            for (Road v : turn.getVia()) {
-                final PathIterator it;
-                if (v.getFromEnd().getJunction().equals(j)) {
-                    it = getContainer().getGui(v).getLaneMiddle(true).getIterator();
-                    j = v.getToEnd().getJunction();
-                } else {
-                    it = getContainer().getGui(v).getLaneMiddle(false).getIterator();
-                    j = v.getFromEnd().getJunction();
+            List<Path2D> result = new ArrayList();
+            Map<Integer, Map<Integer, Boolean>> connectivity = turn.connectivityIndicesForGui();
+            final LaneGui laneGui = getContainer().getGui(turn.getFrom());
+            final RoadGui roadGui = getContainer().getGui(turn.getTo().getRoad());
+            int turnFromLaneIndex = laneGui.getModel().getIndex();
+            Map<Integer, Boolean> toConnections = connectivity.get(turnFromLaneIndex);
+            for (Map.Entry<Integer, Boolean> toLanes : toConnections
+                    .entrySet()/* connections.getValue().entrySet() */) {
+                // Get to and from indexes
+                int toLane = toLanes.getKey();
+                final Path2D path = new Path2D.Double();
+                final List<LaneGui> toLaneGuis = roadGui.getLanes();
+                LaneGui toLaneGui = null;
+                for (LaneGui lane : toLaneGuis) {
+                    Logging.info("Checking lane " + Integer.toString(lane.getModel().getIndex()));
+                    if (lane.getModel().getIndex() == toLane) {
+                        toLaneGui = lane;
+                        break;
+                    }
                 }
+                // Starting point
+                path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
+                // Via points in the middle
+                Junction j = laneGui.getModel().getOutgoingJunction();
+                for (Road v : turn.getVia()) {
+                    final PathIterator it;
+                    if (v.getFromEnd().getJunction().equals(j)) {
+                        it = getContainer().getGui(v).getLaneMiddle(true).getIterator();
+                        j = v.getToEnd().getJunction();
+                    } else {
+                        it = getContainer().getGui(v).getLaneMiddle(false).getIterator();
+                        j = v.getFromEnd().getJunction();
+                    }
 
-                path.append(it, true);
+                    path.append(it, true);
+                }
+                // Ending point
+                try {
+                    path.lineTo(toLaneGui.getIncomingConnectorCenter().getX(),
+                            toLaneGui.getIncomingConnectorCenter().getY());
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("No 'to' point found for LaneGui");
+                }
+                result.add(path);
             }
-            //Ending point
-            try {
-		path.lineTo(toLaneGui.getIncomingConnectorCenter().getX(),toLaneGui.getIncomingConnectorCenter().getY());
-            } catch(Exception e){
-				throw new IllegalArgumentException("No 'to' point found for LaneGui");
-            }
-            result.add(path);
-		 }
-		return result;
+            return result;
         }
 
         private Path2D getPath() {
@@ -117,14 +117,13 @@ class JunctionGui {
 
             final LaneGui laneGui = getContainer().getGui(turn.getFrom());
             final RoadGui roadGui = getContainer().getGui(turn.getTo().getRoad());
-            //Starting point
+            // Starting point
             path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
 
-
-            //Starting point
+            // Starting point
             path.moveTo(laneGui.outgoing.getCenter().getX(), laneGui.outgoing.getCenter().getY());
 
-            //Via points in the middle
+            // Via points in the middle
             Junction j = laneGui.getModel().getOutgoingJunction();
             for (Road v : turn.getVia()) {
                 final PathIterator it;
@@ -138,9 +137,9 @@ class JunctionGui {
 
                 path.append(it, true);
             }
-            //End point
-            path.lineTo(roadGui.getConnector(turn.getTo()).getCenter().getX(), roadGui.getConnector(turn.getTo()).getCenter()
-                .getY());
+            // End point
+            path.lineTo(roadGui.getConnector(turn.getTo()).getCenter().getX(),
+                    roadGui.getConnector(turn.getTo()).getCenter().getY());
 
             return path;
         }
@@ -157,14 +156,13 @@ class JunctionGui {
         }
 
         @Override
-        public
-        boolean contains(Point2D p, State state) {
+        public boolean contains(Point2D p, State state) {
             if (!isVisible(state)) {
                 return false;
             }
 
-            final PathIterator it = new FlatteningPathIterator(getPath().getPathIterator(null), 0.05 / getContainer()
-                .getMpp());
+            final PathIterator it = new FlatteningPathIterator(getPath().getPathIterator(null),
+                    0.05 / getContainer().getMpp());
             final double[] coords = new double[6];
             double lastX = 0;
             double lastY = 0;
@@ -191,20 +189,17 @@ class JunctionGui {
         }
 
         @Override
-        public
-        Type getType() {
+        public Type getType() {
             return Type.TURN_CONNECTION;
         }
 
         @Override
-        public
-        int getZIndex() {
+        public int getZIndex() {
             return 0;
         }
 
         @Override
-        public
-        boolean beginDrag(double x, double y) {
+        public boolean beginDrag(double x, double y) {
             dragBegin = new Point2D.Double(x, y);
             dragOffsetX = 0;
             dragOffsetY = 0;
@@ -212,16 +207,14 @@ class JunctionGui {
         }
 
         @Override
-        public
-        State drag(double x, double y, InteractiveElement target, State old) {
+        public State drag(double x, double y, InteractiveElement target, State old) {
             dragOffsetX = x - dragBegin.getX();
             dragOffsetY = y - dragBegin.getY();
             return old;
         }
 
         @Override
-        public
-        State drop(double x, double y, InteractiveElement target, State old) {
+        public State drop(double x, double y, InteractiveElement target, State old) {
             drag(x, y, target, old);
 
             if (isRemoveDragOffset()) {
@@ -268,7 +261,7 @@ class JunctionGui {
         @Override
         public String toString() {
             return "Corner [x1=" + x1 + ", y1=" + y1 + ", cx1=" + cx1 + ", cy1=" + cy1 + ", cx2=" + cx2 + ", cy2=" + cy2
-                + ", x2=" + x2 + ", y2=" + y2 + "]";
+                    + ", x2=" + x2 + ", y2=" + y2 + "]";
         }
     }
 

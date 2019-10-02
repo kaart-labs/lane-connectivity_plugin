@@ -17,8 +17,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 
-import com.kaart.laneconnectivity.gui.connector.OutgoingConnector;
 import com.kaart.laneconnectivity.gui.connector.IncomingLaneConnector;
+import com.kaart.laneconnectivity.gui.connector.OutgoingConnector;
 import com.kaart.laneconnectivity.model.Lane;
 
 public final class LaneGui {
@@ -28,7 +28,8 @@ public final class LaneGui {
 
         private Point2D dragDelta;
 
-        private LengthSlider() {}
+        private LengthSlider() {
+        }
 
         @Override
         public void paint(Graphics2D g2d, State state) {
@@ -62,22 +63,19 @@ public final class LaneGui {
         }
 
         @Override
-        public
-        boolean beginDrag(double x, double y) {
+        public boolean beginDrag(double x, double y) {
             dragDelta = new Point2D.Double(center.getX() - x, center.getY() - y);
             return true;
         }
 
         @Override
-        public
-        State drag(double x, double y, InteractiveElement target, State old) {
+        public State drag(double x, double y, InteractiveElement target, State old) {
             move(x + dragDelta.getX(), y + dragDelta.getY(), false);
             return new State.Dirty(old);
         }
 
         @Override
-        public
-        State drop(double x, double y, InteractiveElement target, State old) {
+        public State drop(double x, double y, InteractiveElement target, State old) {
             move(x + dragDelta.getX(), y + dragDelta.getY(), true);
             return old;
         }
@@ -86,8 +84,8 @@ public final class LaneGui {
             final double r = getRoad().getConnectorRadius();
 
             final double offset = getRoad().getOffset(x, y);
-            final double newLength = getModel().getOutgoingRoadEnd().isFromEnd() ? offset : getRoad().getLength()
-                    - offset;
+            final double newLength = getModel().getOutgoingRoadEnd().isFromEnd() ? offset
+                    : getRoad().getLength() - offset;
             final double adjustedLength = min(max(newLength, 0.1), getRoad().getLength());
 
             length = adjustedLength;
@@ -109,8 +107,7 @@ public final class LaneGui {
         }
 
         @Override
-        public
-        int getZIndex() {
+        public int getZIndex() {
             return 2;
         }
     }
@@ -149,7 +146,7 @@ public final class LaneGui {
     }
 
     public Point2D getIncomingConnectorCenter() {
-	return incoming.getCenter();
+        return incoming.getCenter();
     }
 
     public GuiContainer getContainer() {
@@ -159,7 +156,8 @@ public final class LaneGui {
     public Path recalculate(Path inner, Path2D innerLine) {
         area.reset();
 
-        double W = road.getContainer().getModel().isLeftDirection() ? -getContainer().getLaneWidth() : getContainer().getLaneWidth();
+        double W = road.getContainer().getModel().isLeftDirection() ? -getContainer().getLaneWidth()
+                : getContainer().getLaneWidth();
 
         final double L = getLength();
 
@@ -169,7 +167,7 @@ public final class LaneGui {
         final Lane leftModel = left == null ? null : left.getModel();
         final double leftLength = leftModel == null
                 || !leftModel.getOutgoingRoadEnd().equals(getModel().getOutgoingRoadEnd()) ? Double.NEGATIVE_INFINITY
-                : leftModel.getKind() == Lane.Kind.EXTRA_LEFT ? left.getLength() : L;
+                        : leftModel.getKind() == Lane.Kind.EXTRA_LEFT ? left.getLength() : L;
 
         final Path outer;
         if (getModel().getKind() == Lane.Kind.EXTRA_LEFT) {
@@ -182,8 +180,8 @@ public final class LaneGui {
             lengthSlider.move(inner.getPoint(L, true));
 
             if (L > leftLength) {
-                innerLine.append(inner.subpath(leftLength + WW, L, true).getIterator(), leftLength >= 0
-                        || getModel().getOutgoingRoadEnd().isFromEnd());
+                innerLine.append(inner.subpath(leftLength + WW, L, true).getIterator(),
+                        leftLength >= 0 || getModel().getOutgoingRoadEnd().isFromEnd());
                 final Point2D op = outer.getPoint(L + WW, true);
                 innerLine.lineTo(op.getX(), op.getY());
             }
@@ -197,8 +195,8 @@ public final class LaneGui {
             area(area, inner, outer);
 
             if (leftLength < L) {
-                innerLine.append(inner.subpath(leftLength + WW, L, true).getIterator(), leftLength >= 0
-                        || getModel().getOutgoingRoadEnd().isFromEnd());
+                innerLine.append(inner.subpath(leftLength + WW, L, true).getIterator(),
+                        leftLength >= 0 || getModel().getOutgoingRoadEnd().isFromEnd());
             }
         }
 

@@ -47,15 +47,13 @@ public final class GuiUtil {
             return null;
         }
 
-        final double d = (a.getX1() - a.getX2()) * (b.getY1() - b.getY2()) - (a.getY1() - a.getY2())
-            * (b.getX1() - b.getX2());
+        final double d = (a.getX1() - a.getX2()) * (b.getY1() - b.getY2())
+                - (a.getY1() - a.getY2()) * (b.getX1() - b.getX2());
 
-        final double x = ((b.getX1() - b.getX2()) * (a.getX1() * a.getY2() - a.getY1() * a.getX2()) - (a.getX1() - a
-            .getX2()) * (b.getX1() * b.getY2() - b.getY1() * b.getX2()))
-            / d;
-        final double y = ((b.getY1() - b.getY2()) * (a.getX1() * a.getY2() - a.getY1() * a.getX2()) - (a.getY1() - a
-            .getY2()) * (b.getX1() * b.getY2() - b.getY1() * b.getX2()))
-            / d;
+        final double x = ((b.getX1() - b.getX2()) * (a.getX1() * a.getY2() - a.getY1() * a.getX2())
+                - (a.getX1() - a.getX2()) * (b.getX1() * b.getY2() - b.getY1() * b.getX2())) / d;
+        final double y = ((b.getY1() - b.getY2()) * (a.getX1() * a.getY2() - a.getY1() * a.getX2())
+                - (a.getY1() - a.getY2()) * (b.getX1() * b.getY2() - b.getY1() * b.getX2())) / d;
 
         return new Point2D.Double(x, y);
     }
@@ -97,22 +95,14 @@ public final class GuiUtil {
     }
 
     public static Point2D relativePoint(Point2D p, double r, double a) {
-        return new Point2D.Double(
-            p.getX() + r * Math.cos(a),
-            p.getY() - r * Math.sin(a)
-        );
+        return new Point2D.Double(p.getX() + r * Math.cos(a), p.getY() - r * Math.sin(a));
     }
 
     public static Line2D relativeLine(Line2D l, double r, double a) {
         final double dx = r * Math.cos(a);
         final double dy = -r * Math.sin(a);
 
-        return new Line2D.Double(
-            l.getX1() + dx,
-            l.getY1() + dy,
-            l.getX2() + dx,
-            l.getY2() + dy
-        );
+        return new Line2D.Double(l.getX1() + dx, l.getY1() + dy, l.getX2() + dx, l.getY2() + dy);
     }
 
     public static double minAngleDiff(double a1, double a2) {

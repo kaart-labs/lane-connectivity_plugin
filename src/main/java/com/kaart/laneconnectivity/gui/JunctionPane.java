@@ -321,11 +321,11 @@ class JunctionPane extends JComponent {
                     center();
                 }
             } catch (UnexpectedDataException e) {
-		Logging.info("Exception");
-		Logging.error(e);
+                Logging.info("Exception");
+                Logging.error(e);
                 displayError(e);
             } catch (RuntimeException e) {
-		Logging.error(e);
+                Logging.error(e);
                 displayError(e);
             }
         } else if (state instanceof State.Dirty) {
@@ -351,8 +351,8 @@ class JunctionPane extends JComponent {
 
     private void displayError(RuntimeException e) {
         error.setText(tr("<html>An error occurred while constructing the model."
-                + " Please run the validator to make sure the data is consistent."
-                + "<br><br>Error: {0}</html>", e.getMessage()));
+                + " Please run the validator to make sure the data is consistent." + "<br><br>Error: {0}</html>",
+                e.getMessage()));
     }
 
     void scale(int x, int y, double scale) {

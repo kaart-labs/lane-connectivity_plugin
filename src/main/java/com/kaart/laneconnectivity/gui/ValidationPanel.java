@@ -21,18 +21,17 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
+
 import com.kaart.laneconnectivity.model.Issue;
 import com.kaart.laneconnectivity.model.Validator;
 
 class ValidationPanel extends JPanel {
     private static final long serialVersionUID = -1585778734201458665L;
 
-    private static final String[] COLUMN_NAMES = {
-        tr("Description"), tr("Type"), tr("Quick-Fix")
-    };
+    private static final String[] COLUMN_NAMES = { tr("Description"), tr("Type"), tr("Quick-Fix") };
 
     private final Action refreshAction = new JosmAction(tr("Refresh"), "dialogs/refresh",
-        tr("Revalidate all turnlanes-relations."), null, false) {
+            tr("Revalidate all turnlanes-relations."), null, false) {
         private static final long serialVersionUID = -8110599654128234810L;
 
         @Override
@@ -41,8 +40,8 @@ class ValidationPanel extends JPanel {
         }
     };
 
-    private final Action fixAction = new JosmAction(tr("Fix"), "dialogs/fix", tr("Automatically fixes the issue."), null,
-        false) {
+    private final Action fixAction = new JosmAction(tr("Fix"), "dialogs/fix", tr("Automatically fixes the issue."),
+            null, false) {
         private static final long serialVersionUID = -8110599654128234810L;
 
         @Override
@@ -56,7 +55,7 @@ class ValidationPanel extends JPanel {
     };
 
     private final Action selectAction = new JosmAction(tr("Select"), "dialogs/select",
-        tr("Selects the offending relation."), null, false) {
+            tr("Selects the offending relation."), null, false) {
         private static final long serialVersionUID = -8110599654128234810L;
 
         @Override
@@ -117,11 +116,9 @@ class ValidationPanel extends JPanel {
         this.issues.clear();
 
         for (Issue i : issues) {
-            final String[] row = {
-                i.getDescription(), //
-                i.getRelation() == null ? tr("(none)") : i.getRelation().get("type"), //
-                i.getQuickFix().getDescription()
-            };
+            final String[] row = { i.getDescription(), //
+                    i.getRelation() == null ? tr("(none)") : i.getRelation().get("type"), //
+                    i.getQuickFix().getDescription() };
             issueModel.addRow(row);
             this.issues.add(i);
         }

@@ -8,20 +8,20 @@ import java.util.Arrays;
  * Path iterator which reverses the path of a given iterator.
  *
  * <p>
- * The given (unreversed) iterator must start with a {@code PathIterator.SEG_MOVETO} and must not
- * contain any {@code PathIterator.SEG_CLOSE}. This class is intended for use with iterators
+ * The given (unreversed) iterator must start with a
+ * {@code PathIterator.SEG_MOVETO} and must not contain any
+ * {@code PathIterator.SEG_CLOSE}. This class is intended for use with iterators
  * returned by {@code Path.getIterator} which has exactly those properties.
  * </p>
  *
  * @author Ben Schulz
  */
 final class ReversePathIterator implements PathIterator {
-    private static final int[] COUNTS = {
-        2, // SEG_MOVETO = 0
-        2, // SEG_LINETO = 1
-        4, // SEG_QUADTO = 2
-        6, // SEG_CUBICTO = 3
-        0, // SEG_CLOSE = 4
+    private static final int[] COUNTS = { 2, // SEG_MOVETO = 0
+            2, // SEG_LINETO = 1
+            4, // SEG_QUADTO = 2
+            6, // SEG_CUBICTO = 3
+            0, // SEG_CLOSE = 4
     };
 
     public static ReversePathIterator reverse(PathIterator it) {
