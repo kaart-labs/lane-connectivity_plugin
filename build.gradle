@@ -15,7 +15,7 @@ plugins {
   id "com.github.spotbugs" version "2.0.0"
   id "org.openstreetmap.josm" version "0.6.1"
   id "net.ltgt.errorprone" version "0.8.1"
-  id 'de.aaschmid.cpd' version '2.0'
+  //id 'de.aaschmid.cpd' version '2.0'
 }
 
 // Set up Errorprone
@@ -35,17 +35,19 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 def versions = [
+  awaitility: "4.0.1",
   errorprone: "2.3.3",
   jacoco: "0.8.2",
+  jmockit: "1.46",
   junit: "5.5.2",
   pmd: "6.6.0",
   spotbugs: "3.1.12",
   wiremock: "2.24.1",
-  awaitility: "4.0.1",
 ]
 
 repositories {
   jcenter()
+  mavenCentral()
 }
 dependencies {
   if (!JavaVersion.current().isJava9Compatible()) {
@@ -56,6 +58,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-api:${versions.junit}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${versions.junit}")
   testImplementation("org.junit.vintage:junit-vintage-engine:${versions.junit}")
+  testCompile("org.jmockit:jmockit:${versions.jmockit}")
   testImplementation("com.github.spotbugs:spotbugs-annotations:${versions.spotbugs}")
   testImplementation("org.openstreetmap.josm:josm-unittest:"){changing=true}
   testImplementation("com.github.tomakehurst:wiremock:${versions.wiremock}")
@@ -71,6 +74,9 @@ ivyModule.dependencies.dependency.each {
 }
 
 test {
+  project.afterEvaluate {
+    jvmArgs("-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}")
+  }
   useJUnitPlatform()
   testLogging.exceptionFormat = 'full'
 }
