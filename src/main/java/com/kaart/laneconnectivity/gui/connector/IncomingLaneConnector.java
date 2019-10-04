@@ -7,10 +7,13 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
+import org.openstreetmap.josm.tools.Logging;
 
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
 import com.kaart.laneconnectivity.gui.State;
+import com.kaart.laneconnectivity.model.Junction;
+import com.kaart.laneconnectivity.model.Road;
 
 public final class IncomingLaneConnector extends InteractiveElement {
     private final Point2D center = new Point2D.Double();
@@ -54,11 +57,30 @@ public final class IncomingLaneConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-	if (laneGui.getRoad().getModel().isPrimary()) {
+    	if (laneGui.getRoad().getModel().isPrimary()) {
             return false;
         }
-	//Make always visible to avoid lane connectivity issues, for now
-	return true;
+    	
+    	
+    	if (state instanceof State.Connecting) {
+	    	final State.Connecting s = (State.Connecting) state;
+	    	final Junction junc1 =  s.getLane().getOutgoingJunction();
+	    	final Junction junc2 = laneGui.getModel().getRoad().getToEnd().getJunction();
+	    	Logging.info("1: " + junc1.toString());
+	    	Logging.info("2: " + junc2.toString());
+	    	for (ViaConnector via : s.getViaConnectors()) {
+	    		if (via.getRoadEnd().getJunction().equals(junc2)) {
+	    			return true;
+	    		}
+	    	}
+	    	if (junc1.equals(junc2)) {
+	    		return true;
+	    	}
+	    	return false;
+    	}
+
+		//Make always visible to avoid lane connectivity issues, for now
+    	return false;
     }
 
     @Override
