@@ -71,14 +71,13 @@ class JunctionGui {
             int turnFromLaneIndex = laneGui.getModel().getIndex();
             Map<Integer, Boolean> toConnections = connectivity.get(turnFromLaneIndex);
             for (Map.Entry<Integer, Boolean> toLanes : toConnections
-                    .entrySet()/* connections.getValue().entrySet() */) {
+                    .entrySet()) {
                 // Get to and from indexes
                 int toLane = toLanes.getKey();
                 final Path2D path = new Path2D.Double();
                 final List<LaneGui> toLaneGuis = roadGui.getLanes();
                 LaneGui toLaneGui = null;
                 for (LaneGui lane : toLaneGuis) {
-                    Logging.info("Checking lane " + Integer.toString(lane.getModel().getIndex()));
                     if (lane.getModel().getIndex() == toLane) {
                         toLaneGui = lane;
                         break;
