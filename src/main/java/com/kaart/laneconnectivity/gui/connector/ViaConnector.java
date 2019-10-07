@@ -54,14 +54,14 @@ public final class ViaConnector extends InteractiveElement {
         }
 
         final State.Connecting s = (State.Connecting) state;
-
-        if (s.getJunction().equals(end.getJunction()) || equals(s.getBacktrackViaConnector())) {
-            return true;
+        
+        if (s.getJunction().equals(end.getJunction()) && roadGui.getModel().getToEnd().equals(end)) {
+        	return true;
         } else if (!s.getViaConnectors().isEmpty()
                 && s.getViaConnectors().get(s.getViaConnectors().size() - 1).getRoadModel().equals(getRoadModel())) {
             return true;
         }
-
+        
         return false;
     }
 

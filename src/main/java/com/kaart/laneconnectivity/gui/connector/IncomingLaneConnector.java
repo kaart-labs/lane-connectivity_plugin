@@ -7,10 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
-
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
 import com.kaart.laneconnectivity.gui.State;
+import com.kaart.laneconnectivity.model.Junction;
+import com.kaart.laneconnectivity.model.Road;
 
 public final class IncomingLaneConnector extends InteractiveElement {
     private final Point2D center = new Point2D.Double();
@@ -54,11 +55,24 @@ public final class IncomingLaneConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-	if (laneGui.getRoad().getModel().isPrimary()) {
+    	if (laneGui.getRoad().getModel().isPrimary()) {
             return false;
         }
-	//Make always visible to avoid lane connectivity issues, for now
-	return true;
+    	
+    	
+    	if (state instanceof State.Connecting) {
+	    	final State.Connecting s = (State.Connecting) state;
+	    	final Junction junc1 =  s.getJunction();
+	    	final Junction junc2 = laneGui.getModel().getRoad().getToEnd().getJunction();
+	    	final Road road1 = s.getLane().getRoad();
+	    	final Road road2 = laneGui.getModel().getRoad();
+	    	if (junc1.equals(junc2) && !road1.equals(road2)) {
+	    		return true;
+	    	}
+	    	return false;
+    	}
+    	
+    	return false;
     }
 
     @Override

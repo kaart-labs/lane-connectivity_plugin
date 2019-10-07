@@ -78,7 +78,8 @@ public final class IncomingConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-	//Set to true to avoid lane-connectivity issues, for now
+    	//Keep invisible so we can use IncomingLaneConnector,
+    	//but still allow to exist so Road.java doesn't break
         return false;
     }
 
