@@ -58,20 +58,18 @@ public final class IncomingLaneConnector extends InteractiveElement {
     	if (laneGui.getRoad().getModel().isPrimary()) {
             return false;
         }
-    	
-    	
+    	//Only make connector visible if possible relations would make sense
     	if (state instanceof State.Connecting) {
 	    	final State.Connecting s = (State.Connecting) state;
-	    	final Junction junc1 =  s.getJunction();
-	    	final Junction junc2 = laneGui.getModel().getRoad().getToEnd().getJunction();
-	    	final Road road1 = s.getLane().getRoad();
-	    	final Road road2 = laneGui.getModel().getRoad();
-	    	if (junc1.equals(junc2) && !road1.equals(road2)) {
+	    	final Junction stateJunc =  s.getJunction();
+	    	final Junction myJunc = laneGui.getModel().getRoad().getToEnd().getJunction();
+	    	final Road stateRoad = s.getLane().getRoad();
+	    	final Road myRoad = laneGui.getModel().getRoad();
+	    	if (stateJunc.equals(myJunc) && !stateRoad.equals(myRoad)) {
 	    		return true;
 	    	}
 	    	return false;
     	}
-    	
     	return false;
     }
 
