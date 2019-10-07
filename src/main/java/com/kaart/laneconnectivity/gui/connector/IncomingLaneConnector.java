@@ -66,9 +66,9 @@ public final class IncomingLaneConnector extends InteractiveElement {
 	    	final State.Connecting s = (State.Connecting) state;
 	    	final Junction junc1 =  s.getJunction();
 	    	final Junction junc2 = laneGui.getModel().getRoad().getToEnd().getJunction();
-	    	Logging.info("1: " + junc1.toString());
-	    	Logging.info("2: " + junc2.toString());
-	    	if (junc1.equals(junc2)) {
+	    	final Road road1 = s.getLane().getRoad();
+	    	final Road road2 = laneGui.getModel().getRoad();
+	    	if (junc1.equals(junc2) && !road1.equals(road2)) {
 	    		return true;
 	    	}
 	    	return false;
