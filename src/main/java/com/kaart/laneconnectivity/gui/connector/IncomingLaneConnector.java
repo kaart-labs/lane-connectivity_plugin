@@ -7,8 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
-import org.openstreetmap.josm.tools.Logging;
-
 import com.kaart.laneconnectivity.gui.InteractiveElement;
 import com.kaart.laneconnectivity.gui.LaneGui;
 import com.kaart.laneconnectivity.gui.State;
@@ -73,8 +71,7 @@ public final class IncomingLaneConnector extends InteractiveElement {
 	    	}
 	    	return false;
     	}
-
-		//Make always visible to avoid lane connectivity issues, for now
+    	
     	return false;
     }
 

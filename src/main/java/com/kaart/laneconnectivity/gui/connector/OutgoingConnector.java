@@ -90,7 +90,6 @@ public final class OutgoingConnector extends InteractiveElement {
     }
 
     private boolean isVisible(State state) {
-	//Make always visible to avoid lane-connectivity issues, for now
         return true;
     }
 
